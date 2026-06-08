@@ -220,6 +220,30 @@ def test_migration_old_db():
     c.close()
 
 
+def test_reconcile_marks_existing():
+    """磁盘已有 PDF 时 reconcile 标记为 downloaded（私下交接 PDF 的衔接保险）。"""
+    import tempfile
+    from quantcrawler.config import load_settings
+    from quantcrawler.db import Catalog
+    from quantcrawler.models import Paper
+    from quantcrawler.downloader import target_path
+    from quantcrawler import pipeline
+    d = tempfile.mkdtemp()
+    s = load_settings(data_dir=d)
+    c = Catalog(s.db_path)
+    c.upsert_papers([Paper(openalex_id="W777", journal_slug="quantitative-finance",
+                           journal_name="QF", doi="https://doi.org/10.9/zz",
+                           publication_year=2021, is_quant=True, download_status="pending")])
+    dest = target_path(s.pdf_dir, "quantitative-finance", 2021, "https://doi.org/10.9/zz", "W777")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_bytes(b"%PDF-1.4\n" + b"y" * 9000)
+    pipeline.reconcile(s, c)
+    row = c.iter_papers("openalex_id='W777'")[0]
+    assert row["download_status"] == "downloaded"
+    assert row["sha256"] and row["pdf_path"].endswith("zz.pdf")
+    c.close()
+
+
 if __name__ == "__main__":
     import traceback
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]

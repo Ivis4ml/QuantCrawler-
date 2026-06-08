@@ -41,6 +41,7 @@ def build_parser() -> argparse.ArgumentParser:
     d.add_argument("--retry-failed", action="store_true", help="重试 failed / paywalled")
 
     sub.add_parser("report", help="生成 CSV / Markdown 报告")
+    sub.add_parser("reconcile", help="扫描 data/pdfs/，把磁盘已存在的 PDF 标记为 downloaded")
     sub.add_parser("stats", help="打印库内统计")
 
     r = sub.add_parser("run", help="顺序执行全流程")
@@ -69,6 +70,8 @@ def main(argv: list[str] | None = None) -> int:
                               limit=args.limit, retry_failed=args.retry_failed)
         elif args.command == "report":
             pipeline.report(settings, catalog)
+        elif args.command == "reconcile":
+            pipeline.reconcile(settings, catalog, only)
         elif args.command == "stats":
             print(json.dumps(catalog.counts(), ensure_ascii=False, indent=2))
         elif args.command == "run":

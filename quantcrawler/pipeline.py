@@ -13,7 +13,7 @@ from pathlib import Path
 from .config import Settings, Journal
 from .crossref import Crossref
 from .db import Catalog
-from .downloader import Downloader, target_path
+from .downloader import Downloader, target_path, _sha256_file
 from .http import HttpClient
 from .models import Paper
 from .openalex import (
@@ -424,6 +424,34 @@ def report(settings: Settings, catalog: Catalog) -> Path:
     md_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
     log.info("报告已写入 %s / %s / %s", list_path, work_path, md_path)
     return list_path
+
+
+def reconcile(settings: Settings, catalog: Catalog, only: str | None = None) -> None:
+    """扫描 data/pdfs/，把磁盘上已存在的 PDF 标记为 downloaded。
+
+    用于「私下共享 PDF + 无缝衔接」：拿到别人下载好的 data/pdfs/（即便没有同一份
+    catalog.sqlite）后，运行本命令即可识别已下载文件，避免重复下载。文件路径由
+    (journal_slug, year, doi) 确定性派生，故与原下载机器一致。
+    """
+    min_bytes = settings.download.get("min_pdf_bytes", 8192)
+    where = "is_quant=1 AND download_status!='downloaded'"
+    params: tuple = ()
+    if only:
+        where += " AND journal_slug=?"
+        params = (only,)
+    rows = catalog.iter_papers(where, params)
+    n = 0
+    for r in rows:
+        dest = target_path(settings.pdf_dir, r["journal_slug"],
+                           r["publication_year"], r["doi"], r["openalex_id"])
+        if dest.exists() and dest.stat().st_size >= min_bytes:
+            catalog.update_pdf_result(
+                r["openalex_id"], pdf_source=r["pdf_source"] or "local",
+                pdf_url=r["pdf_url"], pdf_path=str(dest), sha256=_sha256_file(dest),
+                download_status="downloaded", error=None,
+            )
+            n += 1
+    log.info("reconcile：磁盘已有并标记为 downloaded 的论文：%d 篇", n)
 
 
 def run_all(settings: Settings, catalog: Catalog, only: str | None = None,

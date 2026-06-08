@@ -138,6 +138,11 @@
   .leg{display:flex; gap:24px; justify-content:center; margin-top:20px; flex-wrap:wrap; font-size:14px; color:var(--ink-2)}
   .leg span{display:inline-flex; align-items:center; gap:8px}
   .leg i{width:11px;height:11px;border-radius:3px; display:inline-block}
+  .statcards{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; max-width:860px; margin:0 auto 46px}
+  .statcards .sc{background:var(--soft); border-radius:20px; padding:28px 18px; text-align:center}
+  .statcards .scn{font-size:clamp(32px,4.6vw,48px); font-weight:600; letter-spacing:-.03em; line-height:1; font-variant-numeric:tabular-nums}
+  .statcards .scl{font-size:13px; color:var(--ink-3); margin-top:11px; letter-spacing:-.005em}
+  @media(max-width:720px){.statcards{grid-template-columns:repeat(2,1fr)}}
 
   /* ---------- dark bottleneck ---------- */
   section.dark{background:#000; color:#f5f5f7}
@@ -234,6 +239,7 @@
       <a href="#progress">进度</a>
       <a href="#wall">瓶颈</a>
       <a href="#mission">你的任务</a>
+      <a href="#handoff">交接</a>
     </div>
     <span class="pill"><span class="d"></span>下载中</span>
   </div>
@@ -345,19 +351,25 @@
 <!-- PROGRESS -->
 <section id="progress">
   <div class="wrap">
-    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。下载进行中，免费 OA 命中率约 <b>10–20%</b>。</p></div>
-    <div class="prog rv d1">
+    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。下载进行中，免费 OA 已拿到约 <b>460</b> 篇。</p></div>
+    <div class="statcards rv d1">
+      <div class="sc"><div class="scn" style="color:#1aa64b" data-to="457" data-suffix="↑">0</div><div class="scl">已下载 PDF · 增长中</div></div>
+      <div class="sc"><div class="scn" style="color:#e07b00" data-to="1347">0</div><div class="scl">付费墙 · 需校园网</div></div>
+      <div class="sc"><div class="scn" style="color:#d70015" data-to="654">0</div><div class="scl">失败 / 403</div></div>
+      <div class="sc"><div class="scn" style="color:#86868b" data-to="2132">0</div><div class="scl">待处理</div></div>
+    </div>
+    <div class="prog rv d2">
       <div class="progbar" id="pbar">
-        <i class="pd" data-w="5">0</i><i class="pf" data-w="7">0</i><i class="pp" data-w="23">0</i>
+        <i class="pd" data-w="10"></i><i class="pp" data-w="29"></i><i class="pf" data-w="14"></i>
       </div>
       <div class="leg">
-        <span><i style="background:var(--green)"></i>已下载 213</span>
-        <span><i style="background:var(--red)"></i>失败 322</span>
-        <span><i style="background:var(--orange)"></i>付费墙 1,045</span>
-        <span><i style="background:var(--soft); border:1px solid var(--line)"></i>待处理 3,010</span>
+        <span><i style="background:#34c759"></i>已下载 10%</span>
+        <span><i style="background:#ff9500"></i>付费墙 29%</span>
+        <span><i style="background:#ff3b30"></i>失败 14%</span>
+        <span><i style="background:#e8e8ed"></i>待处理 46%</span>
       </div>
     </div>
-    <p class="narrow rv d2" style="text-align:center; color:var(--ink-2); font-size:18px; margin-top:46px">实测命中率（JFEC 样例，205 篇）：仅 <b style="color:var(--ink)">21 篇 / 10%</b> 拿到免费 OA（14 OpenAlex + 7 arXiv），其余 184 篇付费墙。这把真正的难点暴露出来。</p>
+    <p class="narrow rv d3" style="text-align:center; color:var(--ink-2); font-size:18px; margin-top:48px">免费 OA 命中率约 <b style="color:var(--ink)">10–20%</b>。带链接的那批命中约 28%，但全库近半是付费墙 —— 这正是下一步要靠校园网解决的。</p>
   </div>
 </section>
 
@@ -438,8 +450,35 @@
   </div>
 </section>
 
+<!-- HANDOFF -->
+<section id="handoff">
+  <div class="wrap">
+    <div class="shead rv"><div class="tag">07 · 交接与合规</div><h2>PDF 不上传，但你能无缝接手</h2><p>下载的 PDF <b>不进公开仓库</b>（版权：可免费阅读 ≠ 可公开再分发）。代码与元数据公开，PDF 私下传给你，且<b>下过的不用重下</b>。</p></div>
+    <div class="bento">
+      <div class="tile span3 rv"><div class="ic">为什么不公开 PDF</div><h3>「可读」≠「可再分发」</h3><p>已下载的许可类型混杂（green / hybrid / bronze），bronze 等只授权阅读、不授权转发。公开上传有版权与 DMCA 风险，故 PDF 与数据库已 gitignore。</p></div>
+      <div class="tile span3 rv d1"><div class="ic">公开仓库放什么</div><h3>代码 + 元数据，不含 PDF</h3><p>代码、配置、文档，加 <code>paper_list.csv</code>、<code>download_worklist.csv</code>、<code>summary.md</code>。书目元数据（DOI / 标题 / 链接）来自 OpenAlex（CC0），可公开。</p></div>
+    </div>
+    <div class="bento" style="margin-top:16px">
+      <div class="tile span2 rv"><div class="ic">无缝衔接 · 原理</div><h3>下过的自动跳过</h3><p>每篇有 <code>download_status</code>；<code>download</code> 只挑 pending；即便选中，文件已存在也直接跳过、不发请求。双保险。</p></div>
+      <div class="tile span2 rv d1"><div class="ic">兜底 · reconcile</div><h3>只拿到 PDF 也能对齐</h3><p>没拿到数据库时，<code>harvest</code> 重建后跑 <code>reconcile</code>，按 (期刊, 年, DOI) 路径扫磁盘，把已有 PDF 标记 downloaded。</p></div>
+      <div class="tile span2 rv d2"><div class="ic">详见</div><h3>HANDOFF.md</h3><p>完整的打包、解包、续跑与校园网回填步骤都在仓库根目录 <code>HANDOFF.md</code>。</p></div>
+    </div>
+    <div class="term rv d1">
+      <div class="tb"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+<pre><span class="c"># 交接方：打包已下载的 PDF + 状态库（私下发送）</span>
+<span class="b">tar</span> -czf quantcrawler-data.tgz data/pdfs data/catalog.sqlite
+
+<span class="c"># 接手方：解包到项目根目录，从断点继续</span>
+<span class="b">tar</span> -xzf quantcrawler-data.tgz
+<span class="b">python -m quantcrawler</span> stats        <span class="c"># 确认已下载若干篇</span>
+<span class="b">python -m quantcrawler</span> download     <span class="c"># 只下未完成的</span>
+<span class="g">→ 已下载的自动跳过，绝不重复下载</span></pre>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div class="ft"><b>QuantCrawler</b> · 金融顶刊量化论文采集器 · 实习 warmup<br>data/reports/paper_list.csv &nbsp;·&nbsp; download_worklist.csv &nbsp;·&nbsp; CLAUDE.md</div>
+  <div class="ft"><b>QuantCrawler</b> · 金融顶刊量化论文采集器 · 实习 warmup<br>data/reports/paper_list.csv &nbsp;·&nbsp; download_worklist.csv &nbsp;·&nbsp; CLAUDE.md · AGENTS.md · HANDOFF.md</div>
 </footer>
 
 <script>

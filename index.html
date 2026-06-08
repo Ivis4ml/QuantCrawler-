@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QuantCrawler — 金融顶刊量化论文采集器</title>
+<meta name="description" content="采集 20+ 本金融与量化顶刊 2020–2026 中二级市场 / 微观结构 / 高频 / 量化因子论文，合法下载开放获取原文。" />
+<style>
+  :root{
+    --bg:#fff; --soft:#f5f5f7; --ink:#1d1d1f; --ink-2:#6e6e73; --ink-3:#86868b;
+    --line:#d2d2d7; --line-soft:#e8e8ed; --blue:#0071e3; --blue-ink:#06c;
+    --green:#34c759; --orange:#ff9500; --red:#ff3b30; --indigo:#5e5ce6;
+    --maxw:1040px; --ease:cubic-bezier(.28,.11,.32,1);
+    --sf:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",system-ui,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{font-family:var(--sf);color:var(--ink);background:var(--bg);font-size:17px;line-height:1.5;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  a{color:var(--blue-ink);text-decoration:none}
+  .mono{font-family:var(--mono)}
+  code{font-family:var(--mono);font-size:.84em;background:var(--soft);border:1px solid var(--line-soft);padding:1px 7px;border-radius:6px;color:var(--ink)}
+
+  nav{position:sticky;top:0;z-index:100;height:48px;background:rgba(255,255,255,.72);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid transparent;transition:border-color .3s}
+  nav.scrolled{border-bottom-color:var(--line-soft)}
+  nav .in{max-width:var(--maxw);margin:0 auto;height:100%;padding:0 22px;display:flex;align-items:center;gap:8px}
+  nav .brand{font-weight:600;font-size:16px;margin-right:auto;letter-spacing:-.02em}
+  nav .links{display:flex;gap:24px;margin-right:18px}
+  nav .links a{font-size:13px;color:var(--ink-2);transition:color .2s}
+  nav .links a:hover{color:var(--ink)}
+  nav .gh{font-size:13px;font-weight:500;color:#fff;background:var(--ink);border-radius:980px;padding:6px 14px}
+  nav .gh:hover{background:#000}
+  @media(max-width:720px){nav .links{display:none}}
+
+  .hero{text-align:center;padding:104px 0 70px;position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(58% 52% at 50% 0%,#eef4ff 0%,rgba(238,244,255,0) 70%)}
+  .badge{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;color:var(--ink-2);background:var(--soft);border-radius:980px;padding:6px 14px;margin-bottom:22px}
+  .badge .d{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  h1{font-weight:700;font-size:clamp(48px,9vw,100px);line-height:.95;letter-spacing:-.035em}
+  .hero .sub{font-size:clamp(20px,2.8vw,27px);color:var(--ink-2);font-weight:500;max-width:720px;margin:22px auto 0;line-height:1.36;letter-spacing:-.015em}
+  .hero .sub b{color:var(--ink);font-weight:600}
+  .cta{margin-top:32px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn{font-size:17px;font-weight:400;border-radius:980px;padding:12px 24px;cursor:pointer;border:none;transition:transform .15s var(--ease),background .2s,border-color .2s}
+  .btn:active{transform:scale(.97)}
+  .btn.p{background:var(--blue);color:#fff}.btn.p:hover{background:#0077ed}
+  .btn.s{background:transparent;color:var(--blue-ink);border:1px solid var(--line)}.btn.s:hover{border-color:var(--ink-3)}
+  .btn.d{background:var(--ink);color:#fff}.btn.d:hover{background:#000}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:70px;border-top:1px solid var(--line-soft)}
+  .stats .s{padding:30px 14px;border-right:1px solid var(--line-soft)}
+  .stats .s:last-child{border-right:none}
+  .stats .n{font-size:clamp(32px,5vw,50px);font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .stats .n.b{color:var(--blue-ink)}.stats .n.g{color:#1aa64b}.stats .n.o{color:#e07b00}
+  .stats .l{font-size:13px;color:var(--ink-3);margin-top:10px}
+  @media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.stats .s:nth-child(2){border-right:none}.stats .s:nth-child(-n+2){border-bottom:1px solid var(--line-soft)}}
+
+  section{padding:104px 0}
+  section.soft{background:var(--soft)}
+  .shead{text-align:center;max-width:720px;margin:0 auto 54px}
+  .shead .tag{font-size:14px;font-weight:600;color:var(--blue-ink);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px}
+  .shead h2{font-size:clamp(32px,5.2vw,52px);font-weight:700;letter-spacing:-.03em;line-height:1.06}
+  .shead p{font-size:clamp(18px,2.3vw,21px);color:var(--ink-2);margin-top:18px;line-height:1.4}
+  .shead p b{color:var(--ink);font-weight:600}
+
+  .bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+  .tile{background:var(--bg);border-radius:22px;padding:30px;box-shadow:0 1px 3px rgba(0,0,0,.04),0 8px 30px rgba(0,0,0,.03)}
+  section:not(.soft) .tile{background:var(--soft);box-shadow:none}
+  .tile.s3{grid-column:span 3}.tile.s2{grid-column:span 2}.tile.s6{grid-column:span 6}
+  .tile .ic{font-size:13px;font-weight:600;color:var(--blue-ink);text-transform:uppercase;letter-spacing:.02em}
+  .tile h3{font-size:23px;font-weight:600;letter-spacing:-.02em;margin:12px 0 10px;line-height:1.18}
+  .tile p{font-size:16px;color:var(--ink-2);line-height:1.45}
+  .tile p b{color:var(--ink);font-weight:600}
+  @media(max-width:860px){.bento{grid-template-columns:repeat(2,1fr)}.tile.s3,.tile.s2{grid-column:span 1}.tile.s6{grid-column:span 2}}
+  @media(max-width:520px){.bento{grid-template-columns:1fr}.tile.s6{grid-column:span 1}}
+
+  .pipe{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 12px}
+  .pst{flex:1;min-width:148px;background:var(--bg);border-radius:18px;padding:22px 20px;transition:transform .25s var(--ease),box-shadow .25s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+  .pst:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,.08)}
+  .pst .pn{font-family:var(--mono);font-size:12px;color:var(--blue-ink)}
+  .pst .ph{font-size:17px;font-weight:600;margin:8px 0 6px}
+  .pst .pd{font-size:13px;color:var(--ink-2);line-height:1.4}
+
+  .term{max-width:760px;margin:0 auto;background:#1d1d1f;border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.18)}
+  .term .tb{display:flex;gap:7px;padding:13px 16px;background:#2c2c2e}
+  .term .tb i{width:12px;height:12px;border-radius:50%}
+  .term pre{font-family:var(--mono);font-size:13px;line-height:1.9;color:#d1d1d6;padding:20px 22px;overflow-x:auto}
+  .term .c{color:#86868b}.term .b{color:#5ac8fa}.term .g{color:#30d158}
+
+  .docs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.docs{grid-template-columns:1fr}}
+  .doc{display:block;background:var(--bg);border-radius:18px;padding:26px;border:1px solid var(--line-soft);transition:transform .2s var(--ease),box-shadow .2s}
+  section.soft .doc{background:var(--bg)}
+  .doc:hover{transform:translateY(-3px);box-shadow:0 12px 34px rgba(0,0,0,.07)}
+  .doc .f{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+  .doc h3{font-size:19px;font-weight:600;color:var(--ink);margin:8px 0 6px;letter-spacing:-.01em}
+  .doc p{font-size:14.5px;color:var(--ink-2);line-height:1.45}
+  .doc .go{font-size:14px;color:var(--blue-ink);margin-top:12px;font-weight:500}
+  .doc .go::after{content:" ›"}
+
+  .compliance{max-width:760px;margin:0 auto;text-align:center;background:#fff8f0;border:1px solid #fde3c5;border-radius:22px;padding:38px 40px}
+  .compliance h3{font-size:23px;font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
+  .compliance p{font-size:16.5px;color:#7a5320;line-height:1.5}
+  .compliance p b{color:#5a3d18}
+
+  footer{padding:56px 0 76px;background:var(--soft);text-align:center}
+  footer .ft{font-size:14px;color:var(--ink-2);line-height:1.9}
+  footer .ft a{font-weight:500}
+  footer .meta{font-family:var(--mono);font-size:12px;color:var(--ink-3);margin-top:12px}
+
+  .rv{opacity:0;transform:translateY(32px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+  .rv.in{opacity:1;transform:none}
+  .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="in">
+    <span class="brand">QuantCrawler</span>
+    <div class="links">
+      <a href="#overview">概览</a>
+      <a href="#features">特性</a>
+      <a href="#how">工作方式</a>
+      <a href="#start">快速开始</a>
+      <a href="#docs">文档</a>
+    </div>
+    <a class="gh" href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="badge rv in"><span class="d"></span>Python · 仅依赖 httpx + pyyaml · 17/17 tests</div>
+    <h1 class="rv in d1">QuantCrawler</h1>
+    <p class="sub rv in d2">采集 20+ 本金融与量化顶刊 <b>2020–2026</b> 中<b>二级市场、微观结构、高频交易、量化因子</b>方向的论文，记录元数据，并在合法范围内下载开放获取原文 PDF。</p>
+    <div class="cta rv in d3">
+      <a class="btn d" href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener">在 GitHub 查看</a>
+      <a class="btn s" href="./warmup_brief.html">实习 Warmup ›</a>
+    </div>
+    <div class="stats rv in d4">
+      <div class="s"><div class="n b" data-to="21">0</div><div class="l">目标顶刊</div></div>
+      <div class="s"><div class="n" data-to="4590">0</div><div class="l">相关论文</div></div>
+      <div class="s"><div class="n g" data-to="465" data-suffix="↑">0</div><div class="l">已下载 OA · 增长中</div></div>
+      <div class="s"><div class="n" data-to="6">0</div><div class="l">流水线阶段</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- OVERVIEW -->
+<section id="overview" class="soft">
+  <div class="wrap">
+    <div class="shead rv"><div class="tag">概览</div><h2>一个可断点续跑的学术采集器</h2><p>纯 Python 命令行工具。元数据来自免费学术 API（OpenAlex / Crossref / Unpaywall / arXiv），状态记在 SQLite，<b>每个阶段幂等、可续跑</b>。仅下载合法开放副本，付费墙论文只记元数据。</p></div>
+    <div class="bento">
+      <div class="tile s3 rv"><div class="ic">采集范围</div><h3>20+ 顶刊 · 四个主题</h3><p>核心金融三大刊、微观结构 / 量化 / 数理金融、计量 / 统计 / 管理科学（仅金融相关）。主题聚焦二级市场、微观结构、高频、量化因子，排除公司金融 / 银行 / 宏观。</p></div>
+      <div class="tile s3 rv d1"><div class="ic">规模</div><h3>4,590 篇相关论文</h3><p>2020–2026 窗口内，按类别分口径筛出的相关论文。完整清单见 <code>paper_list.csv</code>，未下载的进 <code>download_worklist.csv</code>。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="shead rv"><div class="tag">特性</div><h2>工程要点</h2></div>
+    <div class="bento">
+      <div class="tile s2 rv"><div class="ic">数据源</div><h3>四个免费 API</h3><p>OpenAlex 元数据 / OA / 主题，Crossref 兜底，Unpaywall 定位 OA，arXiv 匹配预印本。全部 polite pool。</p></div>
+      <div class="tile s2 rv d1"><div class="ic">相关性筛选</div><h3>按期刊类别分口径</h3><p>金融本位刊宽口径；非金融刊只认金融关键词，避免误收通用统计 / ML 论文。</p></div>
+      <div class="tile s2 rv d2"><div class="ic">并发与健壮</div><h3>线程池 + 流式</h3><p>按主机限速（arXiv 单独 1rps），流式落盘、校验 %PDF、sha256、原子写入、断点续传。</p></div>
+      <div class="tile s3 rv"><div class="ic">幂等存储</div><h3>SQLite 状态机</h3><p>每篇记 <code>download_status</code>、<code>pdf_source</code>、<code>sha256</code>。重跑只处理未完成项；列以单一来源驱动建表与自动迁移。</p></div>
+      <div class="tile s3 rv d1"><div class="ic">可交接</div><h3>两机无缝衔接</h3><p>私下传 <code>data/</code> 即可续跑，下过的自动跳过；<code>reconcile</code> 命令按确定性路径对齐磁盘上的 PDF。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW -->
+<section id="how" class="soft">
+  <div class="wrap">
+    <div class="shead rv"><div class="tag">工作方式</div><h2>六阶段流水线</h2></div>
+    <div class="pipe rv">
+      <div class="pst"><div class="pn">01</div><div class="ph">resolve-sources</div><div class="pd">ISSN → Source</div></div>
+      <div class="pst"><div class="pn">02</div><div class="ph">harvest</div><div class="pd">枚举 + 筛选 + 引用</div></div>
+      <div class="pst"><div class="pn">03</div><div class="ph">select</div><div class="pd">按引用排序</div></div>
+      <div class="pst"><div class="pn">04</div><div class="ph">resolve-pdfs</div><div class="pd">定位 OA</div></div>
+      <div class="pst"><div class="pn">05</div><div class="ph">download</div><div class="pd">并发流式下载</div></div>
+      <div class="pst"><div class="pn">06</div><div class="ph">report</div><div class="pd">清单 + 统计</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- START -->
+<section id="start">
+  <div class="wrap">
+    <div class="shead rv"><div class="tag">快速开始</div><h2>三步跑起来</h2></div>
+    <div class="term rv d1">
+      <div class="tb"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+<pre><span class="c"># 1) 安装（仅 httpx + pyyaml）</span>
+pip install -r requirements.txt
+
+<span class="c"># 2) 一条命令跑全流程</span>
+<span class="b">python -m quantcrawler</span> run
+
+<span class="c"># 3) 看进度</span>
+<span class="b">python -m quantcrawler</span> stats
+<span class="g">→ downloaded: 465   paywalled: 1377   failed: 673   pending: 2075</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- DOCS -->
+<section id="docs" class="soft">
+  <div class="wrap">
+    <div class="shead rv"><div class="tag">文档</div><h2>深入了解</h2></div>
+    <div class="docs">
+      <a class="doc rv" href="./warmup_brief.html"><div class="f">warmup_brief.html</div><h3>实习 Warmup</h3><p>任务、架构、瓶颈与你的任务的交互式简报。</p><div class="go">打开</div></a>
+      <a class="doc rv d1" href="https://github.com/Ivis4ml/QuantCrawler-/blob/main/CLAUDE.md" target="_blank" rel="noopener"><div class="f">CLAUDE.md</div><h3>设计文档</h3><p>权威的中文设计与计划：目标、期刊、架构、数据模型、待办。</p><div class="go">查看</div></a>
+      <a class="doc rv d2" href="https://github.com/Ivis4ml/QuantCrawler-/blob/main/AGENTS.md" target="_blank" rel="noopener"><div class="f">AGENTS.md</div><h3>Agent 速查</h3><p>给 Codex / Cursor / Claude Code 的跨工具上手说明（含中文版）。</p><div class="go">查看</div></a>
+      <a class="doc rv" href="https://github.com/Ivis4ml/QuantCrawler-/blob/main/Journals.md" target="_blank" rel="noopener"><div class="f">Journals.md</div><h3>期刊清单</h3><p>21 本顶刊及中文简介，分三组。</p><div class="go">查看</div></a>
+      <a class="doc rv d1" href="https://github.com/Ivis4ml/QuantCrawler-/blob/main/HANDOFF.md" target="_blank" rel="noopener"><div class="f">HANDOFF.md</div><h3>交接说明</h3><p>两机交接、私下共享 PDF、无缝续跑与校园网回填。</p><div class="go">查看</div></a>
+      <a class="doc rv d2" href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener"><div class="f">github.com/Ivis4ml</div><h3>源码仓库</h3><p>完整代码、配置与测试。</p><div class="go">在 GitHub 打开</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section>
+  <div class="wrap">
+    <div class="compliance rv">
+      <h3>关于合规</h3>
+      <p>本项目<b>仅下载合法开放获取副本</b>，不绕过付费墙。下载的 PDF <b>不进公开仓库</b>（版权：可免费阅读 ≠ 可公开再分发），通过私下渠道交接。公开仓库只含代码与书目元数据。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft">
+    <b>QuantCrawler</b> · 金融顶刊量化论文采集器<br>
+    <a href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener">GitHub</a> ·
+    <a href="./warmup_brief.html">Warmup</a> ·
+    <a href="https://github.com/Ivis4ml/QuantCrawler-/blob/main/CLAUDE.md" target="_blank" rel="noopener">设计文档</a>
+    <div class="meta">Python 3.11+ · httpx · pyyaml · OpenAlex / Crossref / Unpaywall / arXiv</div>
+  </div>
+</footer>
+
+<script>
+  const nav=document.getElementById('nav');
+  addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>10));
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.14,rootMargin:'0px 0px -6% 0px'});
+  document.querySelectorAll('.rv:not(.in)').forEach(el=>io.observe(el));
+  function countUp(el){const to=+el.dataset.to,suf=el.dataset.suffix||'',t0=performance.now();function tick(t){const p=Math.min(1,(t-t0)/1200),e=1-Math.pow(1-p,3);el.textContent=Math.round(to*e).toLocaleString()+suf;if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);}
+  const cio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);cio.unobserve(e.target);}}),{threshold:.5});
+  document.querySelectorAll('[data-to]').forEach(el=>cio.observe(el));
+</script>
+</body>
+</html>
