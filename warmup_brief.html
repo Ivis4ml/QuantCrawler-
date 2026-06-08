@@ -258,7 +258,7 @@
     <div class="stats rv in d4">
       <div class="s"><div class="n b" data-to="21">0</div><div class="l">目标顶刊</div></div>
       <div class="s"><div class="n" data-to="4590">0</div><div class="l">相关论文</div></div>
-      <div class="s"><div class="n g" data-to="213" data-suffix="↑">0</div><div class="l">已下载 PDF · 增长中</div></div>
+      <div class="s"><div class="n g" data-to="496" data-suffix="↑">0</div><div class="l">已下载 PDF · 增长中</div></div>
       <div class="s"><div class="n o" data-to="3600" data-prefix="~">0</div><div class="l">付费墙待破解</div></div>
     </div>
   </div>
@@ -343,7 +343,7 @@
 <span class="c"># 或分步 · 看进度</span>
 <span class="b">python -m quantcrawler</span> download
 <span class="b">python -m quantcrawler</span> stats
-<span class="g">→ downloaded: 213   paywalled: 1045   failed: 322   pending: 3010</span></pre>
+<span class="g">→ downloaded: 496   paywalled: 1427   failed: 733   pending: 1934</span></pre>
     </div>
   </div>
 </section>
@@ -351,22 +351,22 @@
 <!-- PROGRESS -->
 <section id="progress">
   <div class="wrap">
-    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。下载进行中，免费 OA 已拿到约 <b>460</b> 篇。</p></div>
+    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。下载进行中，免费 OA 已拿到约 <b>500</b> 篇。</p></div>
     <div class="statcards rv d1">
-      <div class="sc"><div class="scn" style="color:#1aa64b" data-to="457" data-suffix="↑">0</div><div class="scl">已下载 PDF · 增长中</div></div>
-      <div class="sc"><div class="scn" style="color:#e07b00" data-to="1347">0</div><div class="scl">付费墙 · 需校园网</div></div>
-      <div class="sc"><div class="scn" style="color:#d70015" data-to="654">0</div><div class="scl">失败 / 403</div></div>
-      <div class="sc"><div class="scn" style="color:#86868b" data-to="2132">0</div><div class="scl">待处理</div></div>
+      <div class="sc"><div class="scn" style="color:#1aa64b" data-to="496" data-suffix="↑">0</div><div class="scl">已下载 PDF · 增长中</div></div>
+      <div class="sc"><div class="scn" style="color:#e07b00" data-to="1427">0</div><div class="scl">付费墙 · 需校园网</div></div>
+      <div class="sc"><div class="scn" style="color:#d70015" data-to="733">0</div><div class="scl">失败 / 403</div></div>
+      <div class="sc"><div class="scn" style="color:#86868b" data-to="1934">0</div><div class="scl">待处理</div></div>
     </div>
     <div class="prog rv d2">
       <div class="progbar" id="pbar">
-        <i class="pd" data-w="10"></i><i class="pp" data-w="29"></i><i class="pf" data-w="14"></i>
+        <i class="pd" data-w="11"></i><i class="pp" data-w="31"></i><i class="pf" data-w="16"></i>
       </div>
       <div class="leg">
-        <span><i style="background:#34c759"></i>已下载 10%</span>
-        <span><i style="background:#ff9500"></i>付费墙 29%</span>
-        <span><i style="background:#ff3b30"></i>失败 14%</span>
-        <span><i style="background:#e8e8ed"></i>待处理 46%</span>
+        <span><i style="background:#34c759"></i>已下载 11%</span>
+        <span><i style="background:#ff9500"></i>付费墙 31%</span>
+        <span><i style="background:#ff3b30"></i>失败 16%</span>
+        <span><i style="background:#e8e8ed"></i>待处理 42%</span>
       </div>
     </div>
     <p class="narrow rv d3" style="text-align:center; color:var(--ink-2); font-size:18px; margin-top:48px">免费 OA 命中率约 <b style="color:var(--ink)">10–20%</b>。带链接的那批命中约 28%，但全库近半是付费墙 —— 这正是下一步要靠校园网解决的。</p>
@@ -399,7 +399,7 @@
 
     <div class="tabs rv">
       <button class="tab on" data-p="A">Path A · 校园网</button>
-      <button class="tab" data-p="B">Path B · Computer Use</button>
+      <button class="tab" data-p="B">Path B · Codex ★</button>
     </div>
 
     <div class="panel on" data-panel="A">
@@ -417,15 +417,15 @@
     </div>
     <div class="panel" data-panel="B">
       <div class="pathcard B">
-        <div class="ph">进阶</div>
-        <h3>Computer Use / 浏览器自动化</h3>
+        <div class="ph">主线 · 最重要</div>
+        <h3>Codex computer use + 校园网</h3>
         <ul>
-          <li>用 <b>Claude computer use</b>（或 Playwright）驱动已登录机构账号的浏览器</li>
-          <li>读 worklist → 逐条打开落地页 → 点 PDF → 保存到 data/</li>
-          <li>处理各出版社不同的页面结构与下载按钮</li>
-          <li>回填：<code>download_status=downloaded</code> + 算 <code>sha256</code></li>
+          <li>先连<b>校园网 / VPN</b>，让浏览器有出版社订阅权限</li>
+          <li>用 <b>Codex 的 computer use</b> 驱动这个已登录的浏览器</li>
+          <li>读 worklist → 逐条打开落地页 → 下 PDF → <code>import-pdf --doi … --file …</code> 自动归位</li>
+          <li>先跑一小批确认，再分批放大；人工盯着</li>
         </ul>
-        <div class="note">同样遵守 robots 与条款，速率保守、人工监督。这是「让 AI 替你点浏览器」，不是绕过付费墙。</div>
+        <div class="note">务必低频、人工监督、守出版社条款。机构账号高频批量抓取可能导致整校访问被封。这是「让 Codex 替你点浏览器」，不是绕过付费墙。</div>
       </div>
     </div>
 

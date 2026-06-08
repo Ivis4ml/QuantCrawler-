@@ -454,6 +454,58 @@ def reconcile(settings: Settings, catalog: Catalog, only: str | None = None) -> 
     log.info("reconcile：磁盘已有并标记为 downloaded 的论文：%d 篇", n)
 
 
+def _norm_doi(d: str) -> str:
+    d = (d or "").strip().lower()
+    for p in ("https://doi.org/", "http://doi.org/", "doi:"):
+        if d.startswith(p):
+            d = d[len(p):]
+    return d
+
+
+def import_pdf(settings: Settings, catalog: Catalog, *, doi: str | None = None,
+               openalex_id: str | None = None, file: str | None = None) -> None:
+    """把手动下载的一个 PDF 按 DOI（或 openalex id）归位到正确路径并标记 downloaded。
+
+    供实习生用校园网下载后回填：
+        python -m quantcrawler import-pdf --doi 10.1016/j.jfineco.2024.xxx --file C:\\Users\\me\\Downloads\\paper.pdf
+    """
+    import shutil
+    from pathlib import Path
+    from .downloader import _looks_like_pdf, _sha256_file
+
+    if not file:
+        raise SystemExit("需要 --file 指定已下载的 PDF 路径")
+    src = Path(file)
+    if not src.exists():
+        raise SystemExit(f"文件不存在：{src}")
+
+    if openalex_id:
+        rows = catalog.iter_papers("openalex_id=?", (openalex_id,))
+    elif doi:
+        nd = _norm_doi(doi)
+        rows = [r for r in catalog.iter_papers("doi IS NOT NULL")
+                if _norm_doi(r["doi"]) == nd]
+    else:
+        raise SystemExit("需要 --doi 或 --id 指定论文")
+    if not rows:
+        raise SystemExit("库中未找到该论文（确认 DOI 是否在 paper_list.csv 里）")
+    r = rows[0]
+
+    if not _looks_like_pdf(src.read_bytes()[:1024]):
+        raise SystemExit(f"{src} 不是有效 PDF（开头不是 %PDF）")
+
+    dest = target_path(settings.pdf_dir, r["journal_slug"],
+                       r["publication_year"], r["doi"], r["openalex_id"])
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src, dest)
+    catalog.update_pdf_result(
+        r["openalex_id"], pdf_source="manual", pdf_url=r["pdf_url"],
+        pdf_path=str(dest), sha256=_sha256_file(dest),
+        download_status="downloaded", error=None,
+    )
+    log.info("已归位：%s -> %s（标记 downloaded）", src.name, dest)
+
+
 def run_all(settings: Settings, catalog: Catalog, only: str | None = None,
             limit: int | None = None) -> None:
     resolve_sources(settings, catalog, only)

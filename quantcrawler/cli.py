@@ -42,6 +42,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     sub.add_parser("report", help="生成 CSV / Markdown 报告")
     sub.add_parser("reconcile", help="扫描 data/pdfs/，把磁盘已存在的 PDF 标记为 downloaded")
+    imp = sub.add_parser("import-pdf", help="把手动下载的一个 PDF 按 DOI 归位并标记 downloaded")
+    imp.add_argument("--doi", default=None, help="论文 DOI（如 10.1016/j.jfineco.2024.xxx）")
+    imp.add_argument("--id", dest="openalex_id", default=None, help="或用 OpenAlex id")
+    imp.add_argument("--file", required=True, help="已下载的 PDF 文件路径")
     sub.add_parser("stats", help="打印库内统计")
 
     r = sub.add_parser("run", help="顺序执行全流程")
@@ -72,6 +76,9 @@ def main(argv: list[str] | None = None) -> int:
             pipeline.report(settings, catalog)
         elif args.command == "reconcile":
             pipeline.reconcile(settings, catalog, only)
+        elif args.command == "import-pdf":
+            pipeline.import_pdf(settings, catalog, doi=args.doi,
+                                openalex_id=args.openalex_id, file=args.file)
         elif args.command == "stats":
             print(json.dumps(catalog.counts(), ensure_ascii=False, indent=2))
         elif args.command == "run":

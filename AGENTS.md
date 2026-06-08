@@ -55,6 +55,7 @@ python -m quantcrawler resolve-pdfs      # locate OA PDF via Unpaywall + arXiv (
 python -m quantcrawler download          # concurrent streaming download into data/pdfs/
 python -m quantcrawler report            # write paper_list.csv, download_worklist.csv, summary.md
 python -m quantcrawler reconcile         # mark on-disk PDFs as downloaded (for private PDF handoff)
+python -m quantcrawler import-pdf --doi DOI --file PATH   # file a manually-downloaded PDF by DOI
 python -m quantcrawler run               # all of the above in order
 python -m quantcrawler stats             # print catalog counts
 

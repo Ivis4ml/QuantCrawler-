@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>实习指南 · QuantCrawler</title>
+<style>
+  :root{
+    --bg:#fff; --soft:#f5f5f7; --ink:#1d1d1f; --ink-2:#6e6e73; --ink-3:#86868b;
+    --line:#d2d2d7; --line-soft:#e8e8ed; --blue:#0071e3; --blue-ink:#06c;
+    --green:#34c759; --green-ink:#1aa64b; --orange:#ff9500; --red:#ff3b30; --indigo:#5e5ce6;
+    --ease:cubic-bezier(.28,.11,.32,1);
+    --sf:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",system-ui,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:"SF Mono",ui-monospace,Menlo,Consolas,"Courier New",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{font-family:var(--sf);color:var(--ink);background:var(--bg);font-size:17px;line-height:1.6;letter-spacing:-.01em;-webkit-font-smoothing:antialiased}
+  a{color:var(--blue-ink);text-decoration:none}
+  .mono{font-family:var(--mono)}
+  code{font-family:var(--mono);font-size:.85em;background:var(--soft);border:1px solid var(--line-soft);padding:1.5px 7px;border-radius:6px;color:var(--ink);white-space:nowrap}
+
+  /* top bar */
+  nav{position:sticky;top:0;z-index:100;height:50px;background:rgba(255,255,255,.8);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line-soft)}
+  nav .in{max-width:1180px;margin:0 auto;height:100%;padding:0 24px;display:flex;align-items:center;gap:12px}
+  nav .brand{font-weight:600;font-size:15px;margin-right:auto;letter-spacing:-.02em}
+  nav .brand b{color:var(--blue-ink)}
+  nav a.tl{font-size:13px;color:var(--ink-2)}
+  nav a.tl:hover{color:var(--ink)}
+  nav .winpill{font-family:var(--mono);font-size:11px;color:#0067c0;background:#e7f1fb;border-radius:980px;padding:4px 11px}
+
+  /* hero */
+  .hero{max-width:1180px;margin:0 auto;padding:60px 24px 40px}
+  .eyebrow{font-family:var(--mono);font-size:13px;color:var(--blue-ink);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+  .hero h1{font-size:clamp(38px,6vw,66px);font-weight:700;letter-spacing:-.03em;line-height:1.04}
+  .hero p{font-size:clamp(18px,2.4vw,22px);color:var(--ink-2);max-width:680px;margin-top:18px;line-height:1.45}
+  .hero p b{color:var(--ink);font-weight:600}
+
+  /* layout */
+  .layout{max-width:1180px;margin:0 auto;padding:20px 24px 100px;display:grid;grid-template-columns:230px 1fr;gap:48px;align-items:start}
+  @media(max-width:900px){.layout{grid-template-columns:1fr;gap:0}.toc{display:none}}
+
+  .toc{position:sticky;top:74px}
+  .toc .tt{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;padding-left:14px}
+  .toc a{display:block;font-size:14px;color:var(--ink-2);padding:7px 14px;border-left:2px solid transparent;border-radius:0 8px 8px 0;transition:.2s}
+  .toc a:hover{color:var(--ink);background:var(--soft)}
+  .toc a.on{color:var(--blue-ink);border-left-color:var(--blue);font-weight:600;background:#f0f6ff}
+
+  /* content */
+  .doc{min-width:0}
+  .sec{padding:34px 0 10px;scroll-margin-top:70px;border-top:1px solid var(--line-soft)}
+  .sec:first-child{border-top:none;padding-top:8px}
+  .sec .num{font-family:var(--mono);font-size:13px;color:var(--blue-ink)}
+  .sec h2{font-size:clamp(26px,3.6vw,36px);font-weight:700;letter-spacing:-.025em;margin:6px 0 18px;line-height:1.1}
+  .sec h3{font-size:20px;font-weight:600;letter-spacing:-.01em;margin:30px 0 10px}
+  .sec p{color:var(--ink-2);margin:12px 0;max-width:720px}
+  .sec p b{color:var(--ink);font-weight:600}
+  .sec ul{margin:12px 0 12px 4px;max-width:720px}
+  .sec li{color:var(--ink-2);margin:7px 0;padding-left:24px;position:relative;list-style:none}
+  .sec li::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+  .sec li b{color:var(--ink);font-weight:600}
+
+  /* status cards */
+  .scards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+  @media(max-width:620px){.scards{grid-template-columns:repeat(2,1fr)}}
+  .scard{background:var(--soft);border-radius:16px;padding:20px 16px;text-align:center}
+  .scard .n{font-size:32px;font-weight:600;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .scard .l{font-size:12.5px;color:var(--ink-3);margin-top:9px}
+
+  /* file tree */
+  .tree{background:var(--soft);border-radius:16px;padding:8px 6px;margin:18px 0;font-family:var(--mono);font-size:13.5px;line-height:1.9}
+  .tree .row{display:flex;gap:10px;padding:4px 14px;border-radius:8px}
+  .tree .row:hover{background:#ececed}
+  .tree .p{color:var(--ink);min-width:230px;flex:none}
+  .tree .p b{color:var(--blue-ink);font-weight:600}
+  .tree .d{color:var(--ink-3);font-family:var(--sf);font-size:13px}
+  .tree .star{color:var(--orange)}
+  @media(max-width:620px){.tree .p{min-width:150px}}
+
+  /* steps */
+  .steps{counter-reset:st;margin:18px 0}
+  .step{display:flex;gap:18px;padding:20px 0;border-top:1px solid var(--line-soft)}
+  .step:first-child{border-top:none}
+  .step .b{counter-increment:st;flex:none;width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px}
+  .step .b::before{content:counter(st)}
+  .step.g .b{background:var(--green)}
+  .step .sc{min-width:0;flex:1}
+  .step .sc h4{font-size:18px;font-weight:600;margin-bottom:4px}
+  .step .sc p{margin:6px 0}
+
+  /* terminal (windows) */
+  .term{background:#0c1320;border-radius:12px;overflow:hidden;margin:14px 0;border:1px solid #1b2740}
+  .term .tb{display:flex;align-items:center;gap:8px;padding:9px 14px;background:#12203a;font-family:var(--mono);font-size:11.5px;color:#9db6dd}
+  .term .tb .dot{width:9px;height:9px;border-radius:50%;background:#2c66b5}
+  .term .tb .cp{margin-left:auto;cursor:pointer;color:#9db6dd;background:#1b2c4d;border:none;border-radius:6px;padding:3px 10px;font-family:var(--mono);font-size:11px;transition:.2s}
+  .term .tb .cp:hover{background:#26406e;color:#fff}
+  .term pre{font-family:var(--mono);font-size:13px;line-height:1.85;color:#cfe0f5;padding:15px 16px;overflow-x:auto;white-space:pre}
+  .term .c{color:#5e7aa8}.term .y{color:#e9c46a}.term .g{color:#74d99f}.term .w{color:#fff}
+
+  /* callout */
+  .call{border-radius:14px;padding:16px 18px;margin:18px 0;display:flex;gap:14px;font-size:15.5px;line-height:1.5}
+  .call .ico{flex:none;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;margin-top:1px}
+  .call.tip{background:#eefaf0;border:1px solid #c7eccf}.call.tip .ico{background:var(--green)}.call.tip b{color:#15823a}
+  .call.warn{background:#fff7ed;border:1px solid #fde3c5}.call.warn .ico{background:var(--orange)}.call.warn b{color:#9a5b00}
+  .call.imp{background:#fdeeee;border:1px solid #f8cfcf}.call.imp .ico{background:var(--red)}.call.imp b{color:#c0271f}
+  .call .ct{color:var(--ink-2)}.call .ct b{color:var(--ink)}
+
+  /* checklist */
+  .chk{background:var(--soft);border-radius:16px;padding:8px 6px;margin:16px 0}
+  .chk label{display:flex;gap:12px;align-items:flex-start;padding:11px 16px;border-radius:10px;cursor:pointer;font-size:15.5px;color:var(--ink-2)}
+  .chk label:hover{background:#ececed}
+  .chk input{appearance:none;width:21px;height:21px;border:2px solid var(--ink-3);border-radius:6px;flex:none;margin-top:1px;cursor:pointer;transition:.15s}
+  .chk input:checked{background:var(--green);border-color:var(--green)}
+  .chk input:checked+span{color:var(--ink-3);text-decoration:line-through}
+  .chk input:checked::after{content:"✓";color:#fff;display:block;text-align:center;font-size:14px;line-height:17px;font-weight:700}
+  .chk label b{color:var(--ink);font-weight:600}
+
+  .pill2{display:inline-block;font-size:12px;font-weight:600;color:var(--blue-ink);background:#eaf3ff;border-radius:6px;padding:2px 8px;margin-left:6px}
+
+  footer{border-top:1px solid var(--line-soft);margin-top:40px;padding:36px 24px 70px;text-align:center;color:var(--ink-3);font-size:14px}
+  footer a{font-weight:500}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="in">
+    <span class="brand"><b>QuantCrawler</b> · 实习指南</span>
+    <span class="winpill">Windows</span>
+    <a class="tl" href="./index.html">项目主页</a>
+    <a class="tl" href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="eyebrow">从这里开始 · Onboarding</div>
+  <h1>欢迎接手 QuantCrawler</h1>
+  <p>你将接手一个<b>已经在运行</b>的金融论文采集器。系统已经把能免费拿到的论文下好了，<b>你的任务是用学校校园网，把还在付费墙后面的论文合法地下载下来</b>，并回填到系统里。不需要很强的基础，跟着这份指南一步步做即可。本指南面向 <b>Windows</b>。</p>
+</header>
+
+<div class="layout">
+  <!-- TOC -->
+  <aside class="toc">
+    <div class="tt">目录</div>
+    <a href="#what">这是什么</a>
+    <a href="#now">现在做了什么</a>
+    <a href="#repo">仓库里有什么</a>
+    <a href="#setup">环境准备 (Win)</a>
+    <a href="#mission">你的任务 ★</a>
+    <a href="#daily">每日工作流</a>
+    <a href="#vibe">用 AI 帮你</a>
+    <a href="#faq">常见问题</a>
+    <a href="#done">检查成果</a>
+  </aside>
+
+  <main class="doc">
+
+    <!-- WHAT -->
+    <section class="sec" id="what">
+      <div class="num">00</div>
+      <h2>这个项目是什么</h2>
+      <p>QuantCrawler 是一个爬虫，从 <b>21 本金融与量化顶刊</b>里，找出 2020–2026 年发表、和<b>二级市场、市场微观结构、高频交易、量化因子</b>相关的论文，记录信息并下载原文 PDF。</p>
+      <p>它只下载<b>合法的开放获取（免费可下）</b>版本。大量顶刊论文在出版社付费墙后面，脚本下不到 —— 这部分需要用<b>学校的订阅（校园网）</b>在浏览器里下载。这就是交给你的活儿。</p>
+      <div class="call tip"><div class="ico">i</div><div class="ct"><b>你会学到</b>：Git、Python 基础、命令行、用 AI 辅助写代码（vibe coding）、以及用 <b>Codex 的 computer use</b> 借校园网把付费墙文献批量下载下来。边做边学，不懂就问 AI 和看文档。</div></div>
+    </section>
+
+    <!-- NOW -->
+    <section class="sec" id="now">
+      <div class="num">01</div>
+      <h2>现在已经做到哪了</h2>
+      <p>系统是好的、在跑的。你不是从零开始，下面是当前进度：</p>
+      <div class="scards">
+        <div class="scard"><div class="n" style="color:var(--blue-ink)">4,590</div><div class="l">相关论文（已找齐）</div></div>
+        <div class="scard"><div class="n" style="color:var(--green-ink)">496</div><div class="l">免费 OA 已下载</div></div>
+        <div class="scard"><div class="n" style="color:#e07b00">~4,000</div><div class="l">付费墙 · 你来下</div></div>
+        <div class="scard"><div class="n" style="color:var(--ink-3)">17/17</div><div class="l">测试通过</div></div>
+      </div>
+      <ul>
+        <li>爬虫已建好并跑过，4,590 篇相关论文的清单都在 <code>paper_list.csv</code>。</li>
+        <li>已自动下载 <b>496 篇</b>免费开放获取 PDF，放在 <code>data\pdfs\</code>。</li>
+        <li>剩下约 <b>4,000 篇</b>在付费墙后（已确认付费墙 1,427、下载失败 733、还没解析 1,934）。</li>
+        <li>这剩下的，就是你用校园网要去拿的。清单在 <code>download_worklist.csv</code>。</li>
+      </ul>
+    </section>
+
+    <!-- REPO -->
+    <section class="sec" id="repo">
+      <div class="num">02</div>
+      <h2>仓库里都有什么</h2>
+      <p>拿到代码后，你主要打交道的是带 <span class="star">★</span> 的几个。代码本身（<code>quantcrawler\</code>）一般不用改。</p>
+      <div class="tree">
+        <div class="row"><span class="p">quantcrawler\</span><span class="d">爬虫代码（一般不用动）</span></div>
+        <div class="row"><span class="p">config\journals.yaml</span><span class="d">21 本期刊清单</span></div>
+        <div class="row"><span class="p">config\settings.yaml</span><span class="d">设置：主题词、限速、时间窗口</span></div>
+        <div class="row"><span class="p"><span class="star">★</span> data\pdfs\</span><span class="d">下载的 PDF，按 期刊\年份\ 存放</span></div>
+        <div class="row"><span class="p"><span class="star">★</span> data\reports\paper_list.csv</span><span class="d">全部 4,590 篇相关论文清单</span></div>
+        <div class="row"><span class="p"><span class="star">★</span> data\reports\download_worklist.csv</span><span class="d">你的工作清单：还没下到的论文 + DOI + 链接</span></div>
+        <div class="row"><span class="p">data\catalog.sqlite</span><span class="d">进度数据库（谁下过、谁没下）</span></div>
+        <div class="row"><span class="p">CLAUDE.md</span><span class="d">完整设计文档（中文）</span></div>
+        <div class="row"><span class="p">AGENTS.md</span><span class="d">给 AI 助手看的项目说明</span></div>
+        <div class="row"><span class="p">HANDOFF.md</span><span class="d">交接说明</span></div>
+        <div class="row"><span class="p">Journals.md</span><span class="d">21 本期刊介绍</span></div>
+        <div class="row"><span class="p">index.html / warmup_brief.html</span><span class="d">项目网页</span></div>
+      </div>
+      <div class="call imp"><div class="ico">!</div><div class="ct"><b>红线：PDF 不要传到公开仓库。</b> 「免费可读」不等于「可公开再分发」，会有版权问题。PDF 只在你和导师之间私下传。代码和清单（CSV）可以公开。</div></div>
+    </section>
+
+    <!-- SETUP -->
+    <section class="sec" id="setup">
+      <div class="num">03</div>
+      <h2>环境准备（Windows，一步步来）</h2>
+      <p>全程在 <b>PowerShell</b> 里敲命令。开始菜单搜「PowerShell」，右键「以管理员身份运行」打开。下面每个代码块右上角都能点「复制」。</p>
+
+      <div class="steps">
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>装 Python 3.11 或更高</h4>
+          <p>去 <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">python.org</a> 下载安装。<b>安装第一屏务必勾上「Add python.exe to PATH」</b>，否则命令行找不到 python。装完在 PowerShell 验证：</p>
+          <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python --version</span>
+<span class="c"># 看到 Python 3.11.x 或更高就对了。若提示找不到，试 py --version</span></pre></div>
+        </div></div>
+
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>装 Git</h4>
+          <p>去 <a href="https://git-scm.com/download/win" target="_blank" rel="noopener">git-scm.com</a> 下载 Git for Windows，一路默认安装。验证：</p>
+          <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">git --version</span></pre></div>
+        </div></div>
+
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>下载（克隆）代码</h4>
+          <p>选个你放代码的文件夹（比如桌面），克隆仓库并进入：</p>
+          <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">cd $HOME\Desktop</span>
+<span class="w">git clone https://github.com/Ivis4ml/QuantCrawler-.git</span>
+<span class="w">cd QuantCrawler-</span></pre></div>
+        </div></div>
+
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>装依赖</h4>
+          <p>只有两个依赖，很快：</p>
+          <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">pip install -r requirements.txt</span></pre></div>
+        </div></div>
+
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>放入导师给你的数据包</h4>
+          <p>导师会私下给你一个 <code>quantcrawler-data.tgz</code>（里面是已经下好的 496 篇 PDF + 进度数据库）。把它放到项目根目录 <code>QuantCrawler-\</code> 里，然后解包（Win10/11 自带 tar）：</p>
+          <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">tar -xzf quantcrawler-data.tgz</span>
+<span class="c"># 解出 data\pdfs\ 和 data\catalog.sqlite。若 tar 不可用，用 7-Zip 解压两次。</span></pre></div>
+        </div></div>
+
+        <div class="step g"><div class="b"></div><div class="sc">
+          <h4>验证：能看到已下载的数</h4>
+          <p>跑一下统计，看到 downloaded 大约 496 就说明环境和数据都对了：</p>
+          <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler stats</span>
+<span class="g">→ downloaded: 496   paywalled: 1427   failed: 733   pending: 1934</span></pre></div>
+        </div></div>
+      </div>
+      <div class="call warn"><div class="ico">!</div><div class="ct"><b>如果 <code>python</code> 找不到</b>：用 <code>py</code> 代替（如 <code>py -m quantcrawler stats</code>），或重装 Python 时记得勾「Add to PATH」，再重开 PowerShell。</div></div>
+    </section>
+
+    <!-- MISSION -->
+    <section class="sec" id="mission">
+      <div class="num">04</div>
+      <h2>你的任务 ★</h2>
+      <p style="font-size:19px;color:var(--ink)"><b>你的任务有两块。主线：用 Codex 的 computer use 借校园网 VPN，把付费墙后的约 4,000 篇文献拿下来。副线：在本地接着现有进度，把还能免费爬的开放获取继续爬完。</b></p>
+      <p>每一篇下不到的论文都在清单 <code>data\reports\download_worklist.csv</code> 里，每行带 <b>DOI</b> 和 <b>出版社落地页链接</b>。这就是主线的输入。</p>
+
+      <h3>主线 ★：用 Codex computer use + 校园网拿付费墙文献</h3>
+      <p>思路：先连校园网（让浏览器有出版社订阅权限），再让 <b>Codex 的 computer use</b> 在这个已登录的浏览器里，按清单一篇篇「打开落地页 → 点下载 PDF → 保存 → 用 <code>import-pdf</code> 归位」。你在旁边盯着、控制节奏。这是这份工作<b>最重要</b>的部分。</p>
+      <div class="steps">
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>连上校园网 / 学校 VPN</h4>
+          <p>用学校 VPN 或 EZProxy 登录。这一步给你出版社的订阅访问权 —— <b>合法的正常使用</b>。先手动确认：在浏览器里能打开一篇付费墙论文并看到真正的 PDF。</p>
+        </div></div>
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>打开 Codex，指向这个项目</h4>
+          <p>在项目目录里启动 Codex（它会自动读 <code>AGENTS.md</code> 了解项目）。确保它的 <b>computer use / 浏览器</b> 能力可用，并且用的是你<b>已登录校园网</b>的浏览器会话。</p>
+        </div></div>
+        <div class="step"><div class="b"></div><div class="sc">
+          <h4>把任务交给它（示例提示）</h4>
+          <p>让它读清单、逐条用浏览器下载、再回填。可以这样对 Codex 说：</p>
+          <div class="term"><div class="tb"><span class="dot"></span>给 Codex 的提示<button class="cp">复制</button></div><pre><span class="w">读 data\reports\download_worklist.csv 的前 20 行。
+对每一行，用 computer use 在浏览器里打开它的 pdf_landing
+（或 https://doi.org/ 加上 doi），下载该论文的 PDF 到 Downloads，
+然后运行：
+  python -m quantcrawler import-pdf --doi 这行的doi --file 下载到的路径
+每篇之间停几秒；遇到打不开或没有 PDF 就跳过并记录下来。</span></pre></div>
+        </div></div>
+        <div class="step g"><div class="b"></div><div class="sc">
+          <h4>盯着它跑，分批放大</h4>
+          <p>先跑一小批（如 20 篇）确认它点得对、归位成功，再逐步放大。<code>import-pdf</code> 会校验是不是真 PDF，并自动归位到 <code>data\pdfs\期刊\年份\</code> + 标记完成，下次清单里就没它了。每天约 200 篇，两周覆盖大部分。</p>
+        </div></div>
+      </div>
+      <div class="call imp"><div class="ico">!</div><div class="ct"><b>红线：低频、人工盯着、守出版社条款。</b> 用机构账号<b>高频批量</b>自动抓取，可能导致<b>整个学校的访问被封</b>。这是「让 Codex 帮你点浏览器」，不是绕过付费墙。宁可慢，别莽；批量之间留足间隔。</div></div>
+
+      <h3>手动兜底：一篇一篇自己来</h3>
+      <p>Codex 用不了、或某篇它搞不定时，自己在校园网浏览器里把 PDF 下好（下到 <code>Downloads</code>），再用同一条命令归位 —— 不用管放哪、叫什么名：</p>
+      <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler import-pdf </span><span class="y">--doi</span><span class="w"> 10.1093/rof/rfaa027 </span><span class="y">--file</span><span class="w"> $HOME\Downloads\paper.pdf</span>
+<span class="g">→ 已归位并标记 downloaded</span></pre></div>
+
+      <h3>副线：本地继续爬免费 OA</h3>
+      <p>清单里还有约 <b>1,900 篇</b> closed 论文<b>还没解析过</b>，其中一部分其实有免费的 arXiv / 仓库副本能直接爬到。在本地接着现有进度继续跑即可（<b>已下过的不会重下</b>）：</p>
+      <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler resolve-pdfs</span>   <span class="c"># 定位还能免费拿到的（偏慢，arXiv 限速）</span>
+<span class="w">python -m quantcrawler download</span>       <span class="c"># 把新定位到的下下来</span>
+<span class="w">python -m quantcrawler report</span>         <span class="c"># 刷新清单与统计</span></pre></div>
+      <p>这步偏慢，可以让它在后台跑着；命中的自动进 <code>data\pdfs\</code>，没有免费副本的会留在付费墙清单里，交给主线（Codex + 校园网）。</p>
+    </section>
+
+    <!-- DAILY -->
+    <section class="sec" id="daily">
+      <div class="num">05</div>
+      <h2>每天的固定流程</h2>
+      <p>把这个当每日清单，做完打勾：</p>
+      <div class="chk">
+        <label><input type="checkbox"><span>开 PowerShell，<code>cd</code> 到项目目录，<code>git pull</code> 拉最新代码</span></label>
+        <label><input type="checkbox"><span>连上<b>校园网 / VPN</b></span></label>
+        <label><input type="checkbox"><span>主线：用 <b>Codex computer use</b>（校园网浏览器）按 <code>download_worklist.csv</code> 下载 → <code>import-pdf</code> 归位（约 200 篇）；用不了就手动</span></label>
+        <label><input type="checkbox"><span>副线（可选）：本地后台跑 <code>resolve-pdfs → download</code>，继续爬免费 OA</span></label>
+        <label><input type="checkbox"><span>跑 <code>python -m quantcrawler report</code> 刷新统计</span></label>
+        <label><input type="checkbox"><span>把更新后的 <code>data\</code> 私下同步给导师（不传公开仓库）</span></label>
+      </div>
+    </section>
+
+    <!-- VIBE -->
+    <section class="sec" id="vibe">
+      <div class="num">06</div>
+      <h2>用 AI 帮你（vibe coding）</h2>
+      <p>这个题目也是练「用 AI 写代码」。装一个 AI 编码助手（如 <b>Claude Code</b>、Cursor），在项目目录里打开，它会自动读 <code>AGENTS.md</code> 了解项目。你可以这样用它：</p>
+      <ul>
+        <li><b>看不懂某段代码 / 某个命令？</b> 直接问它，让它解释。</li>
+        <li><b>报错了？</b> 把报错贴给它，让它告诉你怎么修。</li>
+        <li><b>想批量处理？</b> 让它帮你写一个小脚本：读 worklist、用 Playwright 打开落地页、下 PDF、调 <code>import-pdf</code>。一步步让它改，跑通为止。</li>
+        <li><b>不确定某操作合不合规？</b> 先问，再做。</li>
+      </ul>
+      <div class="call tip"><div class="ico">i</div><div class="ct">心法：<b>小步快跑</b>。让 AI 一次只改一点，每次都跑一下看对不对，而不是一口气生成一大段。遇到不懂先看 <code>CLAUDE.md</code> 和这份指南。</div></div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="sec" id="faq">
+      <div class="num">07</div>
+      <h2>常见问题</h2>
+      <h3>import-pdf 说「库中未找到该论文」？</h3>
+      <p>确认你用的 DOI 确实在 <code>paper_list.csv</code> 里。本项目只收录 21 刊、2020–2026、四个主题的论文；不在范围内的不会被收录，也不用下。</p>
+      <h3>下下来打开是网页、不是 PDF？</h3>
+      <p>说明没真正拿到原文（多半是没登录校园网，或那篇本身就付费墙）。检查 VPN 是否连上、是否在出版社页面看到了真正的 PDF 按钮。<code>import-pdf</code> 也会校验文件开头是不是 <code>%PDF</code>，不是会拒绝。</p>
+      <h3><code>python</code> 命令找不到？</h3>
+      <p>用 <code>py</code> 代替，或重装 Python 勾「Add to PATH」后重开 PowerShell。</p>
+      <h3>路径里有空格 / 中文？</h3>
+      <p>给路径加引号，例如 <code>--file "C:\Users\我 的\Downloads\a.pdf"</code>。</p>
+      <div class="call imp"><div class="ico">!</div><div class="ct"><b>三条红线：</b>(1) PDF 不传公开仓库；(2) 不要用脚本高频猛刷出版社，会封整校；(3) 只下你学校有权限的，不破解付费墙。</div></div>
+    </section>
+
+    <!-- DONE -->
+    <section class="sec" id="done">
+      <div class="num">08</div>
+      <h2>看你的成果</h2>
+      <p>随时跑这两条，看「已下载」往上涨、清单变短：</p>
+      <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler stats</span>      <span class="c"># 各状态数量</span>
+<span class="w">python -m quantcrawler report</span>     <span class="c"># 刷新 csv 清单与 summary.md</span></pre></div>
+      <p>另外，如果你是把一批 PDF 手动放进了 <code>data\pdfs\</code> 对应文件夹（而不是用 import-pdf 一篇篇来），可以跑一次 <code>reconcile</code> 让系统扫描磁盘、批量标记：</p>
+      <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler reconcile</span></pre></div>
+      <div class="call tip"><div class="ico">✓</div><div class="ct">每天结束，把更新后的 <code>data\</code>（PDF + 数据库）私下同步给导师，进度就接续上了。有问题随时问 AI 或导师。<b>欢迎上车！</b></div></div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <b>QuantCrawler</b> 实习指南 · <a href="./index.html">项目主页</a> · <a href="./warmup_brief.html">项目简报</a> · <a href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener">GitHub</a><br>
+  有疑问先看 CLAUDE.md / HANDOFF.md，或直接问 AI 助手。
+</footer>
+
+<script>
+  // copy buttons
+  document.querySelectorAll('.term .cp').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const pre=btn.closest('.term').querySelector('pre');
+      const text=[...pre.childNodes].map(n=>n.textContent).join('').split('\n').filter(l=>!l.trim().startsWith('#')&&!l.trim().startsWith('→')).join('\n').trim();
+      navigator.clipboard.writeText(text||pre.textContent).then(()=>{const o=btn.textContent;btn.textContent='已复制 ✓';setTimeout(()=>btn.textContent=o,1400);});
+    });
+  });
+  // scrollspy TOC
+  const links=[...document.querySelectorAll('.toc a')];
+  const map={};links.forEach(l=>map[l.getAttribute('href').slice(1)]=l);
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove('on'));map[e.target.id]&&map[e.target.id].classList.add('on');}})},{rootMargin:'-20% 0px -70% 0px'});
+  document.querySelectorAll('.sec').forEach(s=>io.observe(s));
+</script>
+</body>
+</html>

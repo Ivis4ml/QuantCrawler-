@@ -45,6 +45,8 @@ python -m quantcrawler resolve-pdfs      # 经 Unpaywall + arXiv 定位 OA（并
 python -m quantcrawler download          # 并发流式下载到 data/pdfs/
 python -m quantcrawler report            # 输出 paper_list.csv、download_worklist.csv、summary.md
 python -m quantcrawler reconcile         # 把磁盘已有 PDF 标记为 downloaded（私下交接 PDF 用）
+python -m quantcrawler import-pdf --doi DOI --file PATH   # 把手动下载的一个 PDF 按 DOI 归位
+
 python -m quantcrawler run               # 顺序执行以上全部
 python -m quantcrawler stats             # 打印库内统计
 
