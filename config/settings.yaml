@@ -1,0 +1,178 @@
+# 全局运行配置。
+
+# polite pool 联系邮箱：所有 OpenAlex / Unpaywall 请求都会携带，用于提升配额与可联系性。
+mailto: xinchoubiology@gmail.com
+
+# 采集时间窗口（含）。2020 年至今（2020-2026）。
+since: "2020-01-01"
+until: "2026-12-31"
+
+# 下载范围：all（全部相关论文，默认）/ selected（仅每刊每年前 top_per_year）。
+# 本项目主题已收窄到二级市场 / 微观结构 / 高频 / 量化因子，故默认下载全部相关论文，
+# 不再按 20 篇硬性封顶。select 阶段仍可用于按引用排序与可选封顶。
+download_scope: all
+
+# 可选封顶：每刊每年保留的量化论文上限（按引用数降序）。download_scope=selected 时生效。
+top_per_year: 20
+
+# 论文排序与挑选标准：citations（按引用数，默认）/ relevance / recency
+select_by: citations
+
+# 仅采集这些 OpenAlex work 类型（排除 erratum、editorial 等噪声）。
+work_types:
+  - article
+  - review
+
+# HTTP 行为
+http:
+  timeout: 60          # 单请求超时（秒）
+  max_retries: 4       # 失败重试次数
+  backoff: 1.5         # 指数退避基数（秒）
+  rate_limit_rps: 8    # 每秒最大请求数（OpenAlex polite pool 上限约 10 rps）
+
+# 下载行为
+download:
+  rate_limit_rps: 2          # 每个主机的下载节流（按 host 限速，不同主机可并发）
+  timeout: 120
+  max_retries: 3
+  min_pdf_bytes: 8192        # 小于此体积视为无效 PDF
+  max_pdf_bytes: 52428800    # 50MB，超过视为异常并中止，防止 OOM / 磁盘异常
+  resolve_workers: 12        # resolve-pdfs 并发线程数（Unpaywall 快、arXiv 单独低频）
+  download_workers: 12       # download 并发线程数（按 host 限速约束实际频率）
+  user_agent: "QuantCrawler/0.1 (+https://github.com/; mailto:xinchoubiology@gmail.com)"
+
+# 量化相关性筛选
+relevance:
+  # 按类别区分判定：
+  #   - 金融本位刊（core_finance / microstructure_quant）：命中金融信号或通用方法信号
+  #     之一即判为量化相关（宽口径）。
+  #   - 非金融本位刊（management_stats：JASA / JBES / J.Econometrics / OR / Econometrica
+  #     / Management Science）：必须命中金融信号，通用方法词不单独算数。否则会把这些刊
+  #     里高引用的通用统计 / 机器学习 / 运筹论文误纳，再被 select 顶上来。
+  #
+  # 子串匹配，大小写不敏感；关键词按近似词边界匹配。
+
+  # ---- 排除主题：明显非「二级市场 / 微观结构 / 高频 / 量化因子」的方向 ----
+  # 若论文 primary_topic 命中以下子串，且并非通过金融专用关键词（finance_keywords，
+  # 强信号）入选，则剔除。用于把宽口径收窄到本项目四个主题，去掉公司金融、银行、家庭
+  # 金融、房地产、宏观货币、会计、保险、创业等非二级市场内容。
+  exclude_topics:
+    - "Corporate Finance and Governance"
+    - "Corporate Governance"
+    - "Mergers and Acquisitions"
+    - "Banking"
+    - "Credit Risk and Financial Regulations"
+    - "Housing Market"
+    - "Real Estate"
+    - "Private Equity and Venture Capital"
+    - "Financial Literacy"
+    - "Pension"
+    - "Retirement"
+    - "Insurance"
+    - "Mortality"
+    - "Microfinance"
+    - "Monetary Policy"
+    - "Macroeconomic"
+    - "Fiscal"
+    - "Accounting"
+    - "Auditing"
+    - "Entrepreneur"
+    - "Supply Chain"
+    - "Healthcare"
+
+  # ---- 金融信号：金融专用，对所有期刊都算数 ----
+  finance_topics:
+    - "Financial Markets"
+    - "Investment Strateg"
+    - "Volatility"
+    - "Stochastic processes and financial"
+    - "Risk and Portfolio"
+    - "Stock Market Forecasting"
+    - "Market Dynamics"
+    - "Financial Risk"
+    - "Asset Pricing"
+    - "Option Pricing"
+    - "Derivative"
+    - "High-Frequency"
+    - "Cryptocurrenc"
+
+  finance_keywords:
+    # 交易与微观结构
+    - "algorithmic trading"
+    - "high-frequency"
+    - "high frequency"
+    - "hft"
+    - "market microstructure"
+    - "limit order"
+    - "order book"
+    - "order flow"
+    - "optimal execution"
+    - "market making"
+    - "market maker"
+    - "liquidity"
+    - "bid-ask"
+    - "bid–ask"
+    - "price discovery"
+    - "price impact"
+    - "dark pool"
+    - "tick size"
+    - "transaction cost"
+    - "slippage"
+    - "vwap"
+    - "twap"
+    # 波动率 / 风险（金融语境）
+    - "realized volatility"
+    - "realized variance"
+    - "stochastic volatility"
+    - "volatility"
+    - "garch"
+    - "value-at-risk"
+    - "expected shortfall"
+    # 资产定价 / 组合 / 收益
+    - "asset pricing"
+    - "cross-section of"
+    - "return predictability"
+    - "stock return"
+    - "equity return"
+    - "portfolio optimization"
+    - "portfolio choice"
+    - "mean-variance"
+    - "risk premium"
+    # 衍生品 / 执行 / 策略
+    - "option pricing"
+    - "derivative pricing"
+    - "hedging"
+    - "statistical arbitrage"
+    - "pairs trading"
+    - "mean reversion"
+    - "backtest"
+    # 资产类别
+    - "cryptocurrency"
+    - "bitcoin"
+    - "crypto"
+
+  # ---- 通用方法信号：仅金融本位刊算数（在非金融刊里不单独成立）----
+  general_topics:
+    - "Time Series"
+    - "Econometric"
+    - "Machine Learning"
+    - "Quantitative"
+
+  general_keywords:
+    - "factor model"      # 金融指 Fama-French 因子，统计指因子分析，故仅金融刊算数
+    - "momentum"          # 金融动量因子，物理 / MCMC 也用 momentum，故仅金融刊算数
+    - "machine learning"
+    - "deep learning"
+    - "reinforcement learning"
+    - "neural network"
+    - "time series"
+    - "signal"
+    - "high-dimensional"
+    - "nonparametric"
+    - "copula"
+    - "hawkes"
+    - "point process"
+    - "jump diffusion"
+    - "stochastic control"
+    - "anomaly"
+    - "latency"

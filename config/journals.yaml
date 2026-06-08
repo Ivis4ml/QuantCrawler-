@@ -1,0 +1,163 @@
+# 目标期刊注册表（20 本顶刊）。可增删条目。
+# 采集框架：5 年（2020-2024）× 20 本顶刊 × 每刊每年取量化论文前 20 篇（按引用数）
+#           = 2000 篇上限（小刊或薄年份不足 20 篇时取全部，故为上限非保证）。
+# 字段：
+#   slug         文件系统与数据库用的短标识（小写，连字符）
+#   name         期刊全称
+#   issn         ISSN-L（OpenAlex 通过 issn 过滤解析 source）
+#   category     分组：core_finance / microstructure_quant / management_stats
+#   include_all  true 表示本质量化期刊，全部论文纳入；false 表示按相关性筛选
+#   source_id    OpenAlex Source ID（可留空，resolve-sources 会自动解析并回填缓存）
+
+journals:
+  # ==== 核心金融（综合顶刊，相关性筛选）====
+  - slug: journal-of-finance
+    name: The Journal of Finance
+    issn: 0022-1082
+    category: core_finance
+    include_all: false
+    source_id: https://openalex.org/S5353659
+
+  - slug: journal-of-financial-economics
+    name: Journal of Financial Economics
+    issn: 0304-405X
+    category: core_finance
+    include_all: false
+    source_id: https://openalex.org/S149240962
+
+  - slug: review-of-financial-studies
+    name: The Review of Financial Studies
+    issn: 0893-9454
+    category: core_finance
+    include_all: false
+    source_id: https://openalex.org/S170137484
+
+  - slug: review-of-finance
+    name: Review of Finance
+    issn: 1572-3097
+    category: core_finance
+    include_all: false
+    # OpenAlex 对本刊收录碎片化（source 仅约 8 条 2020-2024），故改用 Crossref 按
+    # ISSN 补采（Crossref 有约 242 篇/5 年）。引用数取 is-referenced-by-count。
+    metadata_source: crossref
+
+  - slug: journal-of-financial-intermediation
+    name: Journal of Financial Intermediation
+    issn: 1042-9573
+    category: core_finance
+    include_all: false
+    source_id: https://openalex.org/S5984737
+
+  # ==== 微观结构 / 量化金融 / 数理金融 ====
+  - slug: journal-of-financial-and-quantitative-analysis
+    name: Journal of Financial and Quantitative Analysis
+    issn: 0022-1090
+    category: microstructure_quant
+    include_all: false
+    source_id: https://openalex.org/S193228710
+
+  - slug: journal-of-financial-markets
+    name: Journal of Financial Markets
+    issn: 1386-4181
+    category: microstructure_quant
+    include_all: true
+    source_id: https://openalex.org/S127646213
+
+  - slug: journal-of-banking-and-finance
+    name: Journal of Banking & Finance
+    issn: 0378-4266
+    category: microstructure_quant
+    include_all: false
+    source_id: https://openalex.org/S2876017
+
+  - slug: journal-of-empirical-finance
+    name: Journal of Empirical Finance
+    issn: 0927-5398
+    category: microstructure_quant
+    include_all: false
+    source_id: https://openalex.org/S145875555
+
+  - slug: quantitative-finance
+    name: Quantitative Finance
+    issn: 1469-7688
+    category: microstructure_quant
+    include_all: true
+    source_id: https://openalex.org/S182689569
+
+  - slug: mathematical-finance
+    name: Mathematical Finance
+    issn: 0960-1627
+    category: microstructure_quant
+    include_all: true
+    source_id: https://openalex.org/S133335107
+
+  - slug: finance-and-stochastics
+    name: Finance and Stochastics
+    issn: 0949-2984
+    category: microstructure_quant
+    include_all: true
+    source_id: https://openalex.org/S172526255
+
+  - slug: siam-journal-on-financial-mathematics
+    name: SIAM Journal on Financial Mathematics
+    issn: 1945-497X
+    category: microstructure_quant
+    include_all: true
+    source_id: https://openalex.org/S75627377
+
+  - slug: journal-of-financial-econometrics
+    name: Journal of Financial Econometrics
+    issn: 1479-8409
+    category: microstructure_quant
+    include_all: true
+    source_id: https://openalex.org/S207154782
+
+  - slug: review-of-asset-pricing-studies
+    name: The Review of Asset Pricing Studies
+    issn: 2045-9920
+    category: microstructure_quant
+    include_all: false
+    source_id: https://openalex.org/S2735409286
+
+  # ==== 计量 / 统计 / 管理科学（相关性筛选）====
+  - slug: journal-of-econometrics
+    name: Journal of Econometrics
+    issn: 0304-4076
+    category: management_stats
+    include_all: false
+    source_id: https://openalex.org/S127742747
+
+  - slug: journal-of-the-american-statistical-association
+    name: Journal of the American Statistical Association
+    issn: 0162-1459
+    category: management_stats
+    include_all: false
+    source_id: https://openalex.org/S4394736638
+
+  - slug: journal-of-business-and-economic-statistics
+    name: Journal of Business & Economic Statistics
+    issn: 0735-0015
+    category: management_stats
+    include_all: false
+    source_id: https://openalex.org/S18095783
+
+  - slug: management-science
+    name: Management Science
+    issn: 0025-1909
+    category: management_stats
+    include_all: false
+    source_id: https://openalex.org/S33323087
+
+  - slug: operations-research
+    name: Operations Research
+    issn: 0030-364X
+    category: management_stats
+    include_all: false
+    source_id: https://openalex.org/S125775545
+
+  - slug: econometrica
+    name: Econometrica
+    issn: 0012-9682
+    category: management_stats
+    include_all: false
+    source_id: https://openalex.org/S95464858
