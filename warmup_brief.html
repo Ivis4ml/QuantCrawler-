@@ -258,7 +258,7 @@
     <div class="stats rv in d4">
       <div class="s"><div class="n b" data-to="21">0</div><div class="l">目标顶刊</div></div>
       <div class="s"><div class="n" data-to="4590">0</div><div class="l">相关论文</div></div>
-      <div class="s"><div class="n g" data-to="496" data-suffix="↑">0</div><div class="l">已下载 PDF · 增长中</div></div>
+      <div class="s"><div class="n g" data-to="497">0</div><div class="l">已下载 PDF · 增长中</div></div>
       <div class="s"><div class="n o" data-to="3600" data-prefix="~">0</div><div class="l">付费墙待破解</div></div>
     </div>
   </div>
@@ -313,7 +313,7 @@
         <div class="jcard" data-g="stat"><span class="ab">JASA</span><span class="nm">J. American Statistical Association</span><span class="ct">17</span></div>
       </div>
     </div>
-    <p class="narrow rv d2" style="text-align:center; color:var(--ink-3); font-size:15px; margin-top:28px">计量 / 统计 / 管理科学刊从严筛选，只收金融计量论文 —— 例如 JASA 从 968 篇里仅纳入 17 篇，避免误收通用统计与机器学习论文。</p>
+    <p class="narrow rv d2" style="text-align:center; color:var(--ink-3); font-size:15px; margin-top:28px">计量 / 统计 / 管理科学刊从严筛选，只收金融计量论文，例如 JASA 从 968 篇里仅纳入 17 篇，避免误收通用统计与机器学习论文。</p>
   </div>
 </section>
 
@@ -343,7 +343,7 @@
 <span class="c"># 或分步 · 看进度</span>
 <span class="b">python -m quantcrawler</span> download
 <span class="b">python -m quantcrawler</span> stats
-<span class="g">→ downloaded: 496   paywalled: 1427   failed: 733   pending: 1934</span></pre>
+<span class="g">→ downloaded: 497   paywalled: 3360   failed: 733   pending: 0</span></pre>
     </div>
   </div>
 </section>
@@ -351,25 +351,24 @@
 <!-- PROGRESS -->
 <section id="progress">
   <div class="wrap">
-    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。下载进行中，免费 OA 已拿到约 <b>500</b> 篇。</p></div>
+    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。免费 OA 已全部跑完，共 <b>497</b> 篇。</p></div>
     <div class="statcards rv d1">
-      <div class="sc"><div class="scn" style="color:#1aa64b" data-to="496" data-suffix="↑">0</div><div class="scl">已下载 PDF · 增长中</div></div>
-      <div class="sc"><div class="scn" style="color:#e07b00" data-to="1427">0</div><div class="scl">付费墙 · 需校园网</div></div>
+      <div class="sc"><div class="scn" style="color:#1aa64b" data-to="497">0</div><div class="scl">已下载 PDF · 增长中</div></div>
+      <div class="sc"><div class="scn" style="color:#e07b00" data-to="3360">0</div><div class="scl">付费墙 · 需校园网</div></div>
       <div class="sc"><div class="scn" style="color:#d70015" data-to="733">0</div><div class="scl">失败 / 403</div></div>
-      <div class="sc"><div class="scn" style="color:#86868b" data-to="1934">0</div><div class="scl">待处理</div></div>
+      <div class="sc"><div class="scn" style="color:#06c" data-to="4093">0</div><div class="scl">需校园网（合计）</div></div>
     </div>
     <div class="prog rv d2">
       <div class="progbar" id="pbar">
-        <i class="pd" data-w="11"></i><i class="pp" data-w="31"></i><i class="pf" data-w="16"></i>
+        <i class="pd" data-w="11"></i><i class="pp" data-w="73"></i><i class="pf" data-w="16"></i>
       </div>
       <div class="leg">
         <span><i style="background:#34c759"></i>已下载 11%</span>
-        <span><i style="background:#ff9500"></i>付费墙 31%</span>
+        <span><i style="background:#ff9500"></i>付费墙 73%</span>
         <span><i style="background:#ff3b30"></i>失败 16%</span>
-        <span><i style="background:#e8e8ed"></i>待处理 42%</span>
       </div>
     </div>
-    <p class="narrow rv d3" style="text-align:center; color:var(--ink-2); font-size:18px; margin-top:48px">免费 OA 命中率约 <b style="color:var(--ink)">10–20%</b>。带链接的那批命中约 28%，但全库近半是付费墙 —— 这正是下一步要靠校园网解决的。</p>
+    <p class="narrow rv d3" style="text-align:center; color:var(--ink-2); font-size:18px; margin-top:48px">免费 OA 已全部跑完：<b style="color:var(--ink)">497 篇（11%）</b>。其余 4,093 篇（89%）在付费墙后，需要校园网，这就是实习生的主线。</p>
   </div>
 </section>
 
@@ -387,7 +386,7 @@
       <div class="dcard"><div class="dt r">瓶颈 1 · 主因</div><h3>出版社 403 / Cloudflare</h3><p>Wiley <code>pdfdirect</code>、OUP、Elsevier 对脚本返回 403。这不是 bug，是反爬；只有<b>带认证的真实浏览器</b>能过。</p></div>
       <div class="dcard"><div class="dt o">瓶颈 2 · 速度</div><h3>arXiv 解析慢且低产</h3><p>每篇 closed 论文都要按标题查一次 arXiv，限速 1rps，约 4.5 秒/篇，命中率仅约 6%。</p></div>
       <div class="dcard"><div class="dt o">瓶颈 3 · 摘要缺失</div><h3>Elsevier 限制摘要</h3><p>JFE 等摘要重建率仅约 18%，筛选更依赖标题与主题标注。</p></div>
-      <div class="dcard"><div class="dt" style="color:#30d158">不是瓶颈</div><h3>采集与并发已解决</h3><p>元数据完整、下载已并发流式化。剩下的纯粹是<b>访问权</b>问题 —— 这就是你的真题。</p></div>
+      <div class="dcard"><div class="dt" style="color:#30d158">不是瓶颈</div><h3>采集与并发已解决</h3><p>元数据完整、下载已并发流式化。剩下的纯粹是<b>访问权</b>问题，这就是你的真题。</p></div>
     </div>
   </div>
 </section>

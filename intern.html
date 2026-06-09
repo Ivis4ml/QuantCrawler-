@@ -160,7 +160,7 @@
       <div class="num">00</div>
       <h2>这个项目是什么</h2>
       <p>QuantCrawler 是一个爬虫，从 <b>21 本金融与量化顶刊</b>里，找出 2020–2026 年发表、和<b>二级市场、市场微观结构、高频交易、量化因子</b>相关的论文，记录信息并下载原文 PDF。</p>
-      <p>它只下载<b>合法的开放获取（免费可下）</b>版本。大量顶刊论文在出版社付费墙后面，脚本下不到 —— 这部分需要用<b>学校的订阅（校园网）</b>在浏览器里下载。这就是交给你的活儿。</p>
+      <p>它只下载<b>合法的开放获取（免费可下）</b>版本。大量顶刊论文在出版社付费墙后面，脚本下不到，这部分需要用<b>学校的订阅（校园网）</b>在浏览器里下载。这就是交给你的活儿。</p>
       <div class="call tip"><div class="ico">i</div><div class="ct"><b>你会学到</b>：Git、Python 基础、命令行、用 AI 辅助写代码（vibe coding）、以及用 <b>Codex 的 computer use</b> 借校园网把付费墙文献批量下载下来。边做边学，不懂就问 Codex 和看文档。</div></div>
     </section>
 
@@ -171,14 +171,14 @@
       <p>系统是好的、在跑的。你不是从零开始，下面是当前进度：</p>
       <div class="scards">
         <div class="scard"><div class="n" style="color:var(--blue-ink)">4,590</div><div class="l">相关论文（已找齐）</div></div>
-        <div class="scard"><div class="n" style="color:var(--green-ink)">496</div><div class="l">免费 OA 已下载</div></div>
-        <div class="scard"><div class="n" style="color:#e07b00">~4,000</div><div class="l">付费墙 · 你来下</div></div>
+        <div class="scard"><div class="n" style="color:var(--green-ink)">497</div><div class="l">免费 OA 已下载</div></div>
+        <div class="scard"><div class="n" style="color:#e07b00">4,093</div><div class="l">付费墙 · 你来下</div></div>
         <div class="scard"><div class="n" style="color:var(--ink-3)">17/17</div><div class="l">测试通过</div></div>
       </div>
       <ul>
         <li>爬虫已建好并跑过，4,590 篇相关论文的清单都在 <code>paper_list.csv</code>。</li>
-        <li>已自动下载 <b>496 篇</b>免费开放获取 PDF，放在 <code>data\pdfs\</code>。</li>
-        <li>剩下约 <b>4,000 篇</b>在付费墙后（已确认付费墙 1,427、下载失败 733、还没解析 1,934）。</li>
+        <li>已自动下载 <b>497 篇</b>免费开放获取 PDF，放在 <code>data\pdfs\</code>。</li>
+        <li>剩下约 <b>4,093 篇</b>在付费墙后（付费墙 3,360、下载失败 733，已全部解析完毕）。</li>
         <li>这剩下的，就是你用校园网要去拿的。清单在 <code>download_worklist.csv</code>。</li>
       </ul>
     </section>
@@ -250,7 +250,7 @@
           <h4>验证：能看到已下载的数</h4>
           <p>跑一下统计，看到 downloaded 大约 496 就说明环境和数据都对了：</p>
           <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler stats</span>
-<span class="g">→ downloaded: 496   paywalled: 1427   failed: 733   pending: 1934</span></pre></div>
+<span class="g">→ downloaded: 497   paywalled: 3360   failed: 733   pending: 0</span></pre></div>
         </div></div>
       </div>
       <div class="call warn"><div class="ico">!</div><div class="ct"><b>如果 <code>python</code> 找不到</b>：用 <code>py</code> 代替（如 <code>py -m quantcrawler stats</code>），或重装 Python 时记得勾「Add to PATH」，再重开 PowerShell。</div></div>
@@ -260,7 +260,7 @@
     <section class="sec" id="mission">
       <div class="num">04</div>
       <h2>你的任务 ★</h2>
-      <p style="font-size:19px;color:var(--ink)"><b>你的任务有两块。主线：用 Codex 的 computer use 借校园网 VPN，把付费墙后的约 4,000 篇文献拿下来。副线：在本地接着现有进度，把还能免费爬的开放获取继续爬完。</b></p>
+      <p style="font-size:19px;color:var(--ink)"><b>你的任务有两块。主线：用 Codex 的 computer use 借校园网 VPN，把付费墙后的约 4,093 篇文献拿下来。副线：在本地接着现有进度，把还能免费爬的开放获取继续爬完。</b></p>
       <p>每一篇下不到的论文都在清单 <code>data\reports\download_worklist.csv</code> 里，每行带 <b>DOI</b> 和 <b>出版社落地页链接</b>。这就是主线的输入。</p>
 
       <h3>主线 ★：用 Codex computer use + 校园网拿付费墙文献</h3>
@@ -268,7 +268,7 @@
       <div class="steps">
         <div class="step"><div class="b"></div><div class="sc">
           <h4>连上校园网 / 学校 VPN</h4>
-          <p>用学校 VPN 或 EZProxy 登录。这一步给你出版社的订阅访问权 —— <b>合法的正常使用</b>。先手动确认：在浏览器里能打开一篇付费墙论文并看到真正的 PDF。</p>
+          <p>用学校 VPN 或 EZProxy 登录。这一步给你出版社的订阅访问权，<b>合法的正常使用</b>。先手动确认：在浏览器里能打开一篇付费墙论文并看到真正的 PDF。</p>
         </div></div>
         <div class="step"><div class="b"></div><div class="sc">
           <h4>打开 Codex，指向这个项目</h4>
@@ -292,12 +292,12 @@
       <div class="call imp"><div class="ico">!</div><div class="ct"><b>红线：低频、人工盯着、守出版社条款。</b> 用机构账号<b>高频批量</b>自动抓取，可能导致<b>整个学校的访问被封</b>。这是「让 Codex 帮你点浏览器」，不是绕过付费墙。宁可慢，别莽；批量之间留足间隔。</div></div>
 
       <h3>手动兜底：一篇一篇自己来</h3>
-      <p>Codex 用不了、或某篇它搞不定时，自己在校园网浏览器里把 PDF 下好（下到 <code>Downloads</code>），再用同一条命令归位 —— 不用管放哪、叫什么名：</p>
+      <p>Codex 用不了、或某篇它搞不定时，自己在校园网浏览器里把 PDF 下好（下到 <code>Downloads</code>），再用同一条命令归位，不用管放哪、叫什么名：</p>
       <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler import-pdf </span><span class="y">--doi</span><span class="w"> 10.1093/rof/rfaa027 </span><span class="y">--file</span><span class="w"> $HOME\Downloads\paper.pdf</span>
 <span class="g">→ 已归位并标记 downloaded</span></pre></div>
 
       <h3>副线：本地继续爬免费 OA</h3>
-      <p>清单里还有约 <b>1,900 篇</b> closed 论文<b>还没解析过</b>，其中一部分其实有免费的 arXiv / 仓库副本能直接爬到。在本地接着现有进度继续跑即可（<b>已下过的不会重下</b>）：</p>
+      <p>免费 OA 这部分<b>已经跑完了</b>（共 497 篇）。下面几条命令留着备用：以后想再确认有没有新放出的免费版本，可以再跑一遍（<b>已下过的不会重下</b>）：</p>
       <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler resolve-pdfs</span>   <span class="c"># 定位还能免费拿到的（偏慢，arXiv 限速）</span>
 <span class="w">python -m quantcrawler download</span>       <span class="c"># 把新定位到的下下来</span>
 <span class="w">python -m quantcrawler report</span>         <span class="c"># 刷新清单与统计</span></pre></div>
@@ -323,7 +323,7 @@
     <section class="sec" id="vibe">
       <div class="num">06</div>
       <h2>用 Codex 帮你（vibe coding）</h2>
-      <p>本项目用 <b>Codex</b>（OpenAI 的 AI 编码助手）来做。它能读代码、跑命令、改文件，还能用 <b>computer use</b> 点浏览器 —— 上面的主线就靠它。下面是怎么把它用起来。</p>
+      <p>本项目用 <b>Codex</b>（OpenAI 的 AI 编码助手）来做。它能读代码、跑命令、改文件，还能用 <b>computer use</b> 点浏览器，上面的主线就靠它。下面是怎么把它用起来。</p>
 
       <h3>装好并在项目里打开</h3>
       <p>Codex CLI 需要 Node.js。先去 <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> 装好 Node，然后在 PowerShell 里：</p>
