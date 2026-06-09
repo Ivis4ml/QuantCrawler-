@@ -148,7 +148,7 @@
     <a href="#setup">环境准备 (Win)</a>
     <a href="#mission">你的任务 ★</a>
     <a href="#daily">每日工作流</a>
-    <a href="#vibe">用 AI 帮你</a>
+    <a href="#vibe">用 Codex 帮你</a>
     <a href="#faq">常见问题</a>
     <a href="#done">检查成果</a>
   </aside>
@@ -161,7 +161,7 @@
       <h2>这个项目是什么</h2>
       <p>QuantCrawler 是一个爬虫，从 <b>21 本金融与量化顶刊</b>里，找出 2020–2026 年发表、和<b>二级市场、市场微观结构、高频交易、量化因子</b>相关的论文，记录信息并下载原文 PDF。</p>
       <p>它只下载<b>合法的开放获取（免费可下）</b>版本。大量顶刊论文在出版社付费墙后面，脚本下不到 —— 这部分需要用<b>学校的订阅（校园网）</b>在浏览器里下载。这就是交给你的活儿。</p>
-      <div class="call tip"><div class="ico">i</div><div class="ct"><b>你会学到</b>：Git、Python 基础、命令行、用 AI 辅助写代码（vibe coding）、以及用 <b>Codex 的 computer use</b> 借校园网把付费墙文献批量下载下来。边做边学，不懂就问 AI 和看文档。</div></div>
+      <div class="call tip"><div class="ico">i</div><div class="ct"><b>你会学到</b>：Git、Python 基础、命令行、用 AI 辅助写代码（vibe coding）、以及用 <b>Codex 的 computer use</b> 借校园网把付费墙文献批量下载下来。边做边学，不懂就问 Codex 和看文档。</div></div>
     </section>
 
     <!-- NOW -->
@@ -322,15 +322,32 @@
     <!-- VIBE -->
     <section class="sec" id="vibe">
       <div class="num">06</div>
-      <h2>用 AI 帮你（vibe coding）</h2>
-      <p>这个题目也是练「用 AI 写代码」。装一个 AI 编码助手（如 <b>Claude Code</b>、Cursor），在项目目录里打开，它会自动读 <code>AGENTS.md</code> 了解项目。你可以这样用它：</p>
+      <h2>用 Codex 帮你（vibe coding）</h2>
+      <p>本项目用 <b>Codex</b>（OpenAI 的 AI 编码助手）来做。它能读代码、跑命令、改文件，还能用 <b>computer use</b> 点浏览器 —— 上面的主线就靠它。下面是怎么把它用起来。</p>
+
+      <h3>装好并在项目里打开</h3>
+      <p>Codex CLI 需要 Node.js。先去 <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> 装好 Node，然后在 PowerShell 里：</p>
+      <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">npm install -g @openai/codex</span>
+<span class="w">cd $HOME\Desktop\QuantCrawler-</span>
+<span class="w">codex</span>
+<span class="c"># 首次启动会让你用 ChatGPT 账号登录</span></pre></div>
+      <p>在项目目录里启动后，Codex 会<b>自动读 <code>AGENTS.md</code></b>，立刻明白这个项目是什么、有哪些命令、有哪些规矩。之后你直接用中文给它派活就行。</p>
+
+      <h3>这样用它</h3>
       <ul>
-        <li><b>看不懂某段代码 / 某个命令？</b> 直接问它，让它解释。</li>
-        <li><b>报错了？</b> 把报错贴给它，让它告诉你怎么修。</li>
-        <li><b>想批量处理？</b> 让它帮你写一个小脚本：读 worklist、用 Playwright 打开落地页、下 PDF、调 <code>import-pdf</code>。一步步让它改，跑通为止。</li>
-        <li><b>不确定某操作合不合规？</b> 先问，再做。</li>
+        <li><b>看不懂代码 / 命令？</b> 直接问，例如「解释一下 import-pdf 这个命令做了什么」。</li>
+        <li><b>报错了？</b> 把整段报错贴给它，让它告诉你怎么修。</li>
+        <li><b>主线（最重要）：</b> 让它用 <b>computer use</b> 按 <code>download_worklist.csv</code> 在校园网浏览器里下载付费墙论文、再调 <code>import-pdf</code> 归位（提示词见<a href="#mission">第 04 节</a>）。</li>
+        <li><b>不确定合不合规？</b> 先问它、先小批量试，再放大。</li>
       </ul>
-      <div class="call tip"><div class="ico">i</div><div class="ct">心法：<b>小步快跑</b>。让 AI 一次只改一点，每次都跑一下看对不对，而不是一口气生成一大段。遇到不懂先看 <code>CLAUDE.md</code> 和这份指南。</div></div>
+
+      <h3>用得稳的几个习惯</h3>
+      <ul>
+        <li><b>从保守模式起步：</b> 让 Codex 在跑命令 / 点浏览器前先征求你同意，确认没问题，再逐步提高它的自主度。</li>
+        <li><b>小步快跑：</b> 一次只让它改一点、下一小批，每次都跑一下看对不对，别一口气放它跑几百篇。</li>
+        <li><b>先看文档：</b> 遇到不懂，先翻 <code>AGENTS.md</code>、<code>CLAUDE.md</code> 和这份指南，再问它。</li>
+      </ul>
+      <div class="call tip"><div class="ico">i</div><div class="ct">心法：<b>小步快跑 + 人工在环</b>。Codex 很强，但你要盯着它：小批量验证对了再放大，付费墙下载尤其要控速、守条款。</div></div>
     </section>
 
     <!-- FAQ -->
@@ -357,7 +374,7 @@
 <span class="w">python -m quantcrawler report</span>     <span class="c"># 刷新 csv 清单与 summary.md</span></pre></div>
       <p>另外，如果你是把一批 PDF 手动放进了 <code>data\pdfs\</code> 对应文件夹（而不是用 import-pdf 一篇篇来），可以跑一次 <code>reconcile</code> 让系统扫描磁盘、批量标记：</p>
       <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler reconcile</span></pre></div>
-      <div class="call tip"><div class="ico">✓</div><div class="ct">每天结束，把更新后的 <code>data\</code>（PDF + 数据库）私下同步给导师，进度就接续上了。有问题随时问 AI 或导师。<b>欢迎上车！</b></div></div>
+      <div class="call tip"><div class="ico">✓</div><div class="ct">每天结束，把更新后的 <code>data\</code>（PDF + 数据库）私下同步给导师，进度就接续上了。有问题随时问 Codex 或导师。<b>欢迎上车！</b></div></div>
     </section>
 
   </main>
@@ -365,7 +382,7 @@
 
 <footer>
   <b>QuantCrawler</b> 实习指南 · <a href="./index.html">项目主页</a> · <a href="./warmup_brief.html">项目简报</a> · <a href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener">GitHub</a><br>
-  有疑问先看 CLAUDE.md / HANDOFF.md，或直接问 AI 助手。
+  有疑问先看 CLAUDE.md / HANDOFF.md，或直接问 Codex。
 </footer>
 
 <script>
