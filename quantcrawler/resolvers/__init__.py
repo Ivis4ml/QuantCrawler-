@@ -11,9 +11,10 @@
 from .unpaywall import resolve_unpaywall, best_oa
 from .arxiv import resolve_arxiv
 from .semantic_scholar import resolve_semantic_scholar
+from .openaire import resolve_openaire
 
 __all__ = ["resolve_unpaywall", "resolve_arxiv", "resolve_semantic_scholar",
-           "resolve_candidates"]
+           "resolve_openaire", "resolve_candidates"]
 
 
 def resolve_candidates(http, doi, title, mailto):
@@ -36,8 +37,10 @@ def resolve_candidates(http, doi, title, mailto):
         add(("unpaywall", up[0]))
     s2 = resolve_semantic_scholar(http, doi)
     add(s2)
+    oair = resolve_openaire(http, doi)       # 仓库 / 工作论文 .pdf 直链
+    add(oair)
 
-    have_direct = (up and up[1]) or bool(s2)  # 已有可信 PDF 直链就不必做 arXiv 标题搜索
-    if not have_direct:
+    have_direct = (up and up[1]) or bool(s2) or bool(oair)
+    if not have_direct:                       # 仅在都没拿到直链时才做最慢的 arXiv 标题搜索
         add(resolve_arxiv(http, title))
     return out

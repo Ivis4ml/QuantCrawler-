@@ -27,7 +27,8 @@ log = logging.getLogger("quantcrawler.pipeline")
 
 
 # arXiv / Semantic Scholar 等单独限频，避免 429 / 封 IP（1 rps 属礼貌范围）。
-_META_HOST_RPS = {"export.arxiv.org": 1.0, "api.semanticscholar.org": 0.8}
+_META_HOST_RPS = {"export.arxiv.org": 1.0, "api.semanticscholar.org": 0.8,
+                  "api.openaire.eu": 1.0}
 _DL_HOST_RPS = {"arxiv.org": 1.0, "export.arxiv.org": 1.0}
 
 
