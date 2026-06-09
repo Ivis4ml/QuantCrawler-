@@ -10,16 +10,18 @@
 
 from .unpaywall import resolve_unpaywall, best_oa
 from .arxiv import resolve_arxiv
+from .semantic_scholar import resolve_semantic_scholar
 
-__all__ = ["resolve_unpaywall", "resolve_arxiv", "resolve_candidates"]
+__all__ = ["resolve_unpaywall", "resolve_arxiv", "resolve_semantic_scholar",
+           "resolve_candidates"]
 
 
 def resolve_candidates(http, doi, title, mailto):
     """汇总各来源的开放获取候选，返回去重后的 [(source, url), ...]。
 
-    Unpaywall 先行：若返回真正的 PDF 直链（url_for_pdf），则跳过 arXiv 网络请求以
-    减少对受限速的 arXiv 的访问；否则（Unpaywall 仅有落地页，可能是被拦截的出版社
-    直链）仍尝试 arXiv 作为兜底。
+    顺序：Unpaywall -> Semantic Scholar -> arXiv（标题搜索，最慢）。
+    arXiv 标题搜索仅在前面都没拿到真正的 PDF 直链时才跑，既省请求又降误匹配；
+    Semantic Scholar 常直接给出 arXiv / 机构库 / PMC 直链，能补回不少 OA。
     """
     out: list[tuple[str, str]] = []
     seen: set[str] = set()
@@ -29,9 +31,13 @@ def resolve_candidates(http, doi, title, mailto):
             seen.add(cand[1])
             out.append(cand)
 
-    up = best_oa(http, doi, mailto)
+    up = best_oa(http, doi, mailto)          # (url, is_direct_pdf) | None
     if up:
         add(("unpaywall", up[0]))
-    if not (up and up[1]):  # up[1] = is_direct_pdf；非直链或无结果才试 arXiv
+    s2 = resolve_semantic_scholar(http, doi)
+    add(s2)
+
+    have_direct = (up and up[1]) or bool(s2)  # 已有可信 PDF 直链就不必做 arXiv 标题搜索
+    if not have_direct:
         add(resolve_arxiv(http, title))
     return out

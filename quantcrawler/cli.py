@@ -34,7 +34,9 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("resolve-sources", help="解析并缓存期刊 OpenAlex Source ID")
     sub.add_parser("harvest", help="采集元数据、引用数并做量化相关性筛选")
     sub.add_parser("select", help="每刊每年按引用数取前 top_per_year，置 selected")
-    sub.add_parser("resolve-pdfs", help="为入选论文补充定位开放获取 PDF")
+    rp = sub.add_parser("resolve-pdfs", help="为入选论文补充定位开放获取 PDF")
+    rp.add_argument("--retry", action="store_true",
+                    help="重置 paywalled/failed 回 pending 重新解析（用于新增 OA 来源后再榨一遍）")
 
     d = sub.add_parser("download", help="下载开放获取 PDF")
     d.add_argument("--limit", type=int, default=None, help="本次最多下载篇数")
@@ -68,7 +70,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "select":
             pipeline.select(settings, catalog, only)
         elif args.command == "resolve-pdfs":
-            pipeline.resolve_pdfs(settings, catalog, only)
+            pipeline.resolve_pdfs(settings, catalog, only, retry=getattr(args, "retry", False))
         elif args.command == "download":
             pipeline.download(settings, catalog, only,
                               limit=args.limit, retry_failed=args.retry_failed)

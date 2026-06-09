@@ -26,8 +26,8 @@ from .resolvers import resolve_candidates
 log = logging.getLogger("quantcrawler.pipeline")
 
 
-# arXiv API 与下载站点限速明显，单独限频，避免 429 / 封 IP（1 rps 属礼貌范围）。
-_META_HOST_RPS = {"export.arxiv.org": 1.0}
+# arXiv / Semantic Scholar 等单独限频，避免 429 / 封 IP（1 rps 属礼貌范围）。
+_META_HOST_RPS = {"export.arxiv.org": 1.0, "api.semanticscholar.org": 0.8}
 _DL_HOST_RPS = {"arxiv.org": 1.0, "export.arxiv.org": 1.0}
 
 
@@ -226,11 +226,24 @@ def select(settings: Settings, catalog: Catalog, only: str | None = None) -> Non
 # ----------------------------------------------------------------------------
 # 阶段 3：为入选量化论文定位开放获取 PDF（OpenAlex 之外的补充）
 # ----------------------------------------------------------------------------
-def resolve_pdfs(settings: Settings, catalog: Catalog, only: str | None = None) -> None:
-    # 仅处理目标范围内尚未解析的 pending 项；标记为 paywalled / none 后不再重复解析。
-    # 如需重试无开放副本的论文，可用 download --retry-failed 或手动重置状态。
+def resolve_pdfs(settings: Settings, catalog: Catalog, only: str | None = None,
+                 retry: bool = False) -> None:
+    # retry=True：把之前判为 paywalled / failed 的项重置回 pending 重新解析，
+    # 以便在新增 OA 来源（如 Semantic Scholar）后再榨一遍免费副本。
+    if retry:
+        rwhere = f"{_scope_clause(settings)} AND download_status IN ('paywalled','failed')"
+        rparams: tuple = ()
+        if only:
+            rwhere += " AND journal_slug=?"
+            rparams = (only,)
+        cur = catalog.conn.execute(
+            f"UPDATE papers SET download_status='pending', pdf_url=NULL, "
+            f"pdf_source=NULL, error=NULL WHERE {rwhere}", rparams)
+        catalog.conn.commit()
+        log.info("retry：重置 %d 篇 paywalled/failed 回 pending", cur.rowcount)
+
     where = f"{_scope_clause(settings)} AND download_status='pending' AND pdf_url IS NULL"
-    params: tuple = ()
+    params = ()
     if only:
         where += " AND journal_slug=?"
         params = (only,)
