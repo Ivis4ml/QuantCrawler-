@@ -171,14 +171,14 @@
       <p>系统是好的、在跑的。你不是从零开始，下面是当前进度：</p>
       <div class="scards">
         <div class="scard"><div class="n" style="color:var(--blue-ink)">4,590</div><div class="l">相关论文（已找齐）</div></div>
-        <div class="scard"><div class="n" style="color:var(--green-ink)">497</div><div class="l">免费 OA 已下载</div></div>
-        <div class="scard"><div class="n" style="color:#e07b00">4,093</div><div class="l">付费墙 · 你来下</div></div>
+        <div class="scard"><div class="n" style="color:var(--green-ink)">733</div><div class="l">免费 OA 已下载</div></div>
+        <div class="scard"><div class="n" style="color:#e07b00">3,857</div><div class="l">付费墙 · 你来下</div></div>
         <div class="scard"><div class="n" style="color:var(--ink-3)">17/17</div><div class="l">测试通过</div></div>
       </div>
       <ul>
         <li>爬虫已建好并跑过，4,590 篇相关论文的清单都在 <code>paper_list.csv</code>。</li>
-        <li>已自动下载 <b>497 篇</b>免费开放获取 PDF，放在 <code>data\pdfs\</code>。</li>
-        <li>剩下约 <b>4,093 篇</b>在付费墙后（付费墙 3,360、下载失败 733，已全部解析完毕）。</li>
+        <li>已自动下载 <b>733 篇</b>免费开放获取 PDF，放在 <code>data\pdfs\</code>。</li>
+        <li>剩下约 <b>3,857 篇</b>在付费墙后（付费墙 3,057、下载失败 800，已全部解析完毕）。</li>
         <li>这剩下的，就是你用校园网要去拿的。清单在 <code>download_worklist.csv</code>。</li>
       </ul>
     </section>
@@ -250,7 +250,7 @@
           <h4>验证：能看到已下载的数</h4>
           <p>跑一下统计，看到 downloaded 大约 496 就说明环境和数据都对了：</p>
           <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler stats</span>
-<span class="g">→ downloaded: 497   paywalled: 3360   failed: 733   pending: 0</span></pre></div>
+<span class="g">→ downloaded: 733   paywalled: 3057   failed: 800   pending: 0</span></pre></div>
         </div></div>
       </div>
       <div class="call warn"><div class="ico">!</div><div class="ct"><b>如果 <code>python</code> 找不到</b>：用 <code>py</code> 代替（如 <code>py -m quantcrawler stats</code>），或重装 Python 时记得勾「Add to PATH」，再重开 PowerShell。</div></div>
@@ -260,7 +260,7 @@
     <section class="sec" id="mission">
       <div class="num">04</div>
       <h2>你的任务 ★</h2>
-      <p style="font-size:19px;color:var(--ink)"><b>你的任务有两块。主线：用 Codex 的 computer use 借校园网 VPN，把付费墙后的约 4,093 篇文献拿下来。副线：在本地接着现有进度，把还能免费爬的开放获取继续爬完。</b></p>
+      <p style="font-size:19px;color:var(--ink)"><b>你的任务有两块。主线：用 Codex 的 computer use 借校园网 VPN，把付费墙后的约 3,857 篇文献拿下来。副线：在本地接着现有进度，把还能免费爬的开放获取继续爬完。</b></p>
       <p>每一篇下不到的论文都在清单 <code>data\reports\download_worklist.csv</code> 里，每行带 <b>DOI</b> 和 <b>出版社落地页链接</b>。这就是主线的输入。</p>
 
       <h3>主线 ★：用 Codex computer use + 校园网拿付费墙文献</h3>
@@ -297,7 +297,7 @@
 <span class="g">→ 已归位并标记 downloaded</span></pre></div>
 
       <h3>副线：本地继续爬免费 OA</h3>
-      <p>免费 OA 这部分<b>已经跑完了</b>（共 497 篇）。下面几条命令留着备用：以后想再确认有没有新放出的免费版本，可以再跑一遍（<b>已下过的不会重下</b>）：</p>
+      <p>免费 OA 这部分<b>已经跑完了</b>（共 733 篇）。下面几条命令留着备用：以后想再确认有没有新放出的免费版本，可以再跑一遍（<b>已下过的不会重下</b>）：</p>
       <div class="term"><div class="tb"><span class="dot"></span>Windows PowerShell<button class="cp">复制</button></div><pre><span class="w">python -m quantcrawler resolve-pdfs</span>   <span class="c"># 定位还能免费拿到的（偏慢，arXiv 限速）</span>
 <span class="w">python -m quantcrawler download</span>       <span class="c"># 把新定位到的下下来</span>
 <span class="w">python -m quantcrawler report</span>         <span class="c"># 刷新清单与统计</span></pre></div>
