@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import csv
 import logging
+import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
@@ -32,6 +33,15 @@ _META_HOST_RPS = {"export.arxiv.org": 1.0, "api.semanticscholar.org": 0.8,
 _DL_HOST_RPS = {"arxiv.org": 1.0, "export.arxiv.org": 1.0}
 
 
+def _meta_host_rps() -> dict[str, float]:
+    """元数据请求的按主机限速。CORE 限速极严：免费注册层为固定窗口 10 请求 / 60 秒
+    （实测），故带 key 时限到 0.15 rps（约 9/min，安全留在窗口内）；匿名层更严，限到
+    0.1 rps。超限时服务端返回 429，客户端退避后跳过该篇，不影响续跑。"""
+    host_rps = dict(_META_HOST_RPS)
+    host_rps["api.core.ac.uk"] = 0.15 if os.environ.get("CORE_API_KEY") else 0.1
+    return host_rps
+
+
 def _http(settings: Settings) -> HttpClient:
     h = settings.http
     return HttpClient(
@@ -39,7 +49,7 @@ def _http(settings: Settings) -> HttpClient:
         max_retries=h.get("max_retries", 4),
         backoff=h.get("backoff", 1.5),
         rate_limit_rps=h.get("rate_limit_rps", 8),
-        host_rps=_META_HOST_RPS,
+        host_rps=_meta_host_rps(),
         retry_after_cap=h.get("retry_after_cap", 120),
         user_agent=f"QuantCrawler/0.1 (mailto:{settings.mailto})",
     )

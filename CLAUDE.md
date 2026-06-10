@@ -53,6 +53,9 @@ arXiv 预印本，因此开放获取版本的覆盖率在本领域相对较高�
 | 期刊与论文元数据枚举 | OpenAlex | REST `api.openalex.org` | 否（polite pool 需 mailto） |
 | 摘要 | OpenAlex `abstract_inverted_index` 重建 | — | 否 |
 | 开放获取 PDF 定位（补充） | Unpaywall | `api.unpaywall.org/v2/{doi}` | 否（需 email 参数） |
+| 开放获取 PDF 定位（补充） | Semantic Scholar | `api.semanticscholar.org/graph/v1`（openAccessPdf） | 否 |
+| 开放获取 PDF 定位（补充） | OpenAIRE | `api.openaire.eu/search/publications` | 否 |
+| 开放获取 PDF 定位（补充） | CORE | `api.core.ac.uk/v3/search/works`（downloadUrl） | 可选（`CORE_API_KEY` 环境变量提升配额，匿名亦可但限速严） |
 | 预印本 PDF | arXiv | `export.arxiv.org/api/query`（Atom） | 否 |
 
 选择 OpenAlex 为主源的理由：免费、无需密钥、覆盖全面、可按 source（期刊）与发表
@@ -160,7 +163,8 @@ config/settings.yaml ─┤
                       ▼
          ┌──────────────────────────┐
          │ resolve-pdfs             │  对入选量化论文定位开放获取 PDF：
-         │                          │  OpenAlex OA → Unpaywall → arXiv
+         │                          │  OpenAlex OA → Unpaywall → Semantic
+         │                          │  Scholar → OpenAIRE → CORE → arXiv
          └──────────────────────────┘
                       ▼
          ┌──────────────────────────┐
@@ -192,7 +196,8 @@ QuantCrawler/
 │   ├── http.py               带限速与重试的 HTTP 客户端
 │   ├── openalex.py           source 解析、works 迭代、摘要重建
 │   ├── relevance.py          量化相关性筛选
-│   ├── resolvers/            PDF 来源解析器（openalex_oa / unpaywall / arxiv）
+│   ├── resolvers/            PDF 来源解析器（openalex_oa / unpaywall /
+│   │                         semantic_scholar / openaire / core / arxiv）
 │   ├── downloader.py         PDF 下载、校验、去重
 │   ├── pipeline.py           各阶段编排
 │   └── cli.py                命令行入口
@@ -256,17 +261,31 @@ python -m quantcrawler stats                     # 打印库内统计
 - **流式下载 + 体积上限**（`downloader.py` + `http.stream_to_file`）：逐块写入临时
   文件，首块即校验 `%PDF` 魔数，超过 `max_pdf_bytes`（默认 50MB）中止，增量计算
   sha256，原子 `replace` 落盘。避免大文件全量入内存。
-- **获取覆盖率**：下载请求带 `Accept: application/pdf`；Unpaywall 优先返回仓库 PDF
-  直链（`url_for_pdf`）而非落地页；arXiv 改 https；仅当 Unpaywall 返回真直链时才跳过
-  arXiv（被 Cloudflare 拦截的出版社直链仍回退 arXiv）。
+- **获取覆盖率（多源候选链）**：下载请求带 `Accept: application/pdf`；按
+  Unpaywall -> Semantic Scholar -> OpenAIRE -> CORE -> arXiv 依次解析。前三者为免密
+  钥快源（Unpaywall 优先返回仓库 PDF 直链 `url_for_pdf`，Semantic Scholar 常给 arXiv /
+  PMC 直链，OpenAIRE 补机构库 .pdf）；CORE 与 arXiv 标题搜索仅在前面都没拿到直链时才
+  跑，既省请求又降误匹配。CORE 还须过滤其 `downloadUrl` 中混入的出版社付费链接，优先
+  取 `core.ac.uk/download/<id>.pdf` 自托管直链（不经 Cloudflare）与机构库 .pdf。
 - **下载失败不污染原链接**：兜底候选失败时保留库中原始 `pdf_url` / `pdf_source`，避免
   重试丢失 OpenAlex 原始 OA 链接。
 - **Retry-After 封顶**（默认 120s）并支持 HTTP-date，防止被服务端拖成超长阻塞。
 - **内省式数据库迁移**：以 `_PAPERS_COLUMNS` 为单一事实来源，旧库自动补齐缺列。
 
 性能特征：1788 篇带 OpenAlex OA 候选的论文并发下载快；其余约 2800 篇经 Unpaywall
-（快）与 arXiv（1 rps，主要耗时）补充解析。开放获取命中率受出版社限制，金融顶刊约
-10-20%（如 OUP/Wiley/Elsevier 直链多被 Cloudflare 拦截），其余进失败清单走校园网。
+（快）、Semantic Scholar、OpenAIRE、CORE 与 arXiv（均较慢，按主机限速，主要耗时）补充
+解析。开放获取命中率受出版社限制，金融顶刊约 10-20%（如 OUP/Wiley/Elsevier 直链多被
+Cloudflare 拦截），其余进失败清单走校园网。多源补充后，全量 4590 篇相关论文已下载
+OA 副本 961 篇（约 21%）；CORE 一轮 `resolve-pdfs --retry` 净增 24 篇（23 篇为
+`core.ac.uk` 自托管直链、1 篇机构库），另有 11 篇为重试时 unpaywall / S2 / OpenAIRE
+重新命中。
+
+CORE 鉴权与限速：v3 接口匿名可用但限速极严。免费注册层实测为固定窗口 10 请求 / 60 秒
+（响应头 `x-ratelimit-limit: 10`，耗尽后约 60s 重置），故带 `CORE_API_KEY` 时
+`api.core.ac.uk` 限到 0.15 rps（约 9/min，安全留在窗口内），匿名层限到 0.1 rps（见
+`pipeline._meta_host_rps`）。解析器以 Bearer 提交 key（在 <https://core.ac.uk/services/api>
+免费注册）。该 10/min 上限是 CORE 兜底解析的吞吐瓶颈：对数千篇待解析论文，CORE 阶段
+耗时以小时计，但幂等可续跑。
 
 ## 10. Paper Digest 种子语料（补充发现轴）
 
@@ -337,7 +356,8 @@ Paper Digest 榜单跨越本项目「顶刊 2020 年至今」范围之外：
 - [x] 项目骨架与配置（`config/`、`quantcrawler/` 包）
 - [x] OpenAlex 元数据采集（source 解析、works 游标分页、摘要重建）
 - [x] 量化相关性筛选（主题白名单 + 关键词，偏向召回）
-- [x] PDF 解析与下载（OpenAlex OA / Unpaywall / arXiv 多候选，PDF 校验、sha256、断点续传）
+- [x] PDF 解析与下载（OpenAlex OA / Unpaywall / Semantic Scholar / OpenAIRE / CORE /
+      arXiv 多候选，PDF 校验、sha256、断点续传）
 - [x] CLI 与端到端验证（单元测试 10/10 通过；单刊端到端跑通）
 - [x] 期刊清单扩至 21 本（20 本顶刊 + JFI；含引用数采集所需配置）
 - [x] 框架：采集时间窗口 2020-2024，harvest 记录 `cited_by_count`
@@ -348,7 +368,12 @@ Paper Digest 榜单跨越本项目「顶刊 2020 年至今」范围之外：
 - [x] 全量采集 21 刊（paper_list.csv 共 4590 篇相关论文）
 - [x] ultracode 审计 + 下载流水线优化（并发、流式、按主机限速、获取覆盖、内省迁移；
       见 9.1；16/16 单元测试通过）
-- [ ] 全量下载收尾（后台运行中：PDF 落入 `data/pdfs/`，失败进 worklist）
+- [x] 补充 OA 来源：Semantic Scholar、OpenAIRE、CORE 解析器，与 `resolve-pdfs --retry`
+      （重置 paywalled/failed 回 pending 再榨一遍）。OA 命中从约 497 经 S2/OpenAIRE 提升
+      到 926，再经 CORE 一轮全量 --retry 提升到 961（CORE 净增 24，其他源重试补 11）
+- [x] 全量下载收尾：OA 副本 961 篇落入 `data/pdfs/`，其余 3629 篇入 `download_worklist.csv`
+      （付费墙 2841 + 失败 788），走校园网 / 人工。CORE 受 10 请求/分钟限速，全量 --retry
+      解析约 6 小时
 - [ ] 轴 B：Paper Digest 种子语料连接器（见第 10 节，待实现）
 - [ ] 待办优化（审计 P2/P3，未实现）：OpenAlex 多候选持久化 pdf_candidates、arXiv DOI
       校验与 Jaccard 放宽、关键词复数/屈折召回、exclude_topics 次级主题、harvested_at 入

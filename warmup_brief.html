@@ -258,8 +258,8 @@
     <div class="stats rv in d4">
       <div class="s"><div class="n b" data-to="21">0</div><div class="l">目标顶刊</div></div>
       <div class="s"><div class="n" data-to="4590">0</div><div class="l">相关论文</div></div>
-      <div class="s"><div class="n g" data-to="926">0</div><div class="l">免费 OA · 已下载</div></div>
-      <div class="s"><div class="n o" data-to="3600" data-prefix="~">0</div><div class="l">付费墙待破解</div></div>
+      <div class="s"><div class="n g" data-to="961">0</div><div class="l">免费 OA · 已下载</div></div>
+      <div class="s"><div class="n o" data-to="3629">0</div><div class="l">付费墙待破解</div></div>
     </div>
   </div>
 </header>
@@ -325,12 +325,12 @@
       <div class="pstage"><div class="pn">01</div><div class="ph">resolve-sources</div><div class="pd">ISSN → OpenAlex Source</div></div>
       <div class="pstage"><div class="pn">02</div><div class="ph">harvest</div><div class="pd">枚举 + 重建摘要 + 记引用 + 主题筛选</div></div>
       <div class="pstage"><div class="pn">03</div><div class="ph">select</div><div class="pd">每刊每年按引用排序</div></div>
-      <div class="pstage"><div class="pn">04</div><div class="ph">resolve-pdfs</div><div class="pd">Unpaywall + arXiv 定位 OA</div></div>
+      <div class="pstage"><div class="pn">04</div><div class="ph">resolve-pdfs</div><div class="pd">多源候选链定位 OA</div></div>
       <div class="pstage"><div class="pn">05</div><div class="ph">download</div><div class="pd">并发流式下载到 data/</div></div>
       <div class="pstage"><div class="pn">06</div><div class="ph">report</div><div class="pd">清单 + 失败 + 统计</div></div>
     </div>
     <div class="bento" style="margin-top:16px">
-      <div class="tile span3 rv"><div class="ic">数据源</div><h3>四个免费学术 API</h3><p><b>OpenAlex</b> 元数据 / OA / 主题 · <b>Crossref</b> RoF 补采 · <b>Unpaywall</b> 按 DOI 定位 OA · <b>arXiv</b> 按标题匹配预印本。全部 polite pool，无需付费密钥。</p></div>
+      <div class="tile span3 rv"><div class="ic">数据源</div><h3>多源免费学术 API</h3><p><b>OpenAlex</b> 元数据 / OA / 主题 · <b>Crossref</b> RoF 补采 · OA 定位走 <b>Unpaywall → Semantic Scholar → OpenAIRE → CORE → arXiv</b> 多源候选链。全部 polite pool，无需付费密钥。</p></div>
       <div class="tile span3 rv d1"><div class="ic">相关性筛选</div><h3>按期刊类别分口径</h3><p>金融本位刊宽口径；非金融刊（JASA / MS / OR）<b>只认金融专用关键词</b>。<code>exclude_topics</code> 排除公司金融 / 银行 / 宏观。</p></div>
       <div class="tile span3 rv d2"><div class="ic">存储 / 续跑</div><h3>SQLite 状态机</h3><p>每篇记 <code>download_status</code>（pending / downloaded / paywalled / failed）、<code>pdf_source</code>、<code>sha256</code>。重跑只处理未完成项。</p></div>
       <div class="tile span3 rv d3"><div class="ic">并发与健壮 · 已优化</div><h3>线程池 + 按主机限速 + 流式</h3><p>12 线程并发，主线程统一写库；按主机限速（arXiv 单独 1rps）；流式落盘、首块校验 %PDF、50MB 上限、原子写入。</p></div>
@@ -343,7 +343,7 @@
 <span class="c"># 或分步 · 看进度</span>
 <span class="b">python -m quantcrawler</span> download
 <span class="b">python -m quantcrawler</span> stats
-<span class="g">→ downloaded: 926   paywalled: 2966   failed: 698   pending: 0</span></pre>
+<span class="g">→ downloaded: 961   paywalled: 2841   failed: 788   pending: 0</span></pre>
     </div>
   </div>
 </section>
@@ -351,24 +351,24 @@
 <!-- PROGRESS -->
 <section id="progress">
   <div class="wrap">
-    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。免费 OA 已全部跑完，共 <b>926</b> 篇。</p></div>
+    <div class="shead rv"><div class="tag">04 · 进度</div><h2>现在到哪了</h2><p>采集已完成 <b>4,590</b> 篇。免费 OA 已全部跑完，共 <b>961</b> 篇。</p></div>
     <div class="statcards rv d1">
-      <div class="sc"><div class="scn" style="color:#1aa64b" data-to="926">0</div><div class="scl">免费 OA · 已下载</div></div>
-      <div class="sc"><div class="scn" style="color:#e07b00" data-to="2966">0</div><div class="scl">付费墙 · 需校园网</div></div>
-      <div class="sc"><div class="scn" style="color:#d70015" data-to="698">0</div><div class="scl">失败 / 403</div></div>
-      <div class="sc"><div class="scn" style="color:#06c" data-to="3664">0</div><div class="scl">需校园网（合计）</div></div>
+      <div class="sc"><div class="scn" style="color:#1aa64b" data-to="961">0</div><div class="scl">免费 OA · 已下载</div></div>
+      <div class="sc"><div class="scn" style="color:#e07b00" data-to="2841">0</div><div class="scl">付费墙 · 需校园网</div></div>
+      <div class="sc"><div class="scn" style="color:#d70015" data-to="788">0</div><div class="scl">失败 / 403</div></div>
+      <div class="sc"><div class="scn" style="color:#06c" data-to="3629">0</div><div class="scl">需校园网（合计）</div></div>
     </div>
     <div class="prog rv d2">
       <div class="progbar" id="pbar">
-        <i class="pd" data-w="20"></i><i class="pp" data-w="65"></i><i class="pf" data-w="15"></i>
+        <i class="pd" data-w="21"></i><i class="pp" data-w="62"></i><i class="pf" data-w="17"></i>
       </div>
       <div class="leg">
-        <span><i style="background:#34c759"></i>已下载 20%</span>
-        <span><i style="background:#ff9500"></i>付费墙 65%</span>
-        <span><i style="background:#ff3b30"></i>失败 15%</span>
+        <span><i style="background:#34c759"></i>已下载 21%</span>
+        <span><i style="background:#ff9500"></i>付费墙 62%</span>
+        <span><i style="background:#ff3b30"></i>失败 17%</span>
       </div>
     </div>
-    <p class="narrow rv d3" style="text-align:center; color:var(--ink-2); font-size:18px; margin-top:48px">免费 OA 已全部跑完：<b style="color:var(--ink)">926 篇（20%）</b>。其余 3,664 篇（80%）在付费墙后，需要校园网，这就是实习生的主线。</p>
+    <p class="narrow rv d3" style="text-align:center; color:var(--ink-2); font-size:18px; margin-top:48px">免费 OA 已全部跑完：<b style="color:var(--ink)">961 篇（21%）</b>。其余 3,629 篇（79%）在付费墙后，需要校园网，这就是实习生的主线。</p>
   </div>
 </section>
 
@@ -378,13 +378,13 @@
     <div class="shead rv"><div class="tag">05 · 瓶颈</div><h2>那堵 403 的墙</h2><p>顶刊原文 PDF 直链几乎都在出版社站点，用 <b>Cloudflare 反爬</b>：对没有浏览器会话、没有机构订阅的脚本请求，直接返回 <b>403</b>。</p></div>
     <div class="funnel rv d1">
       <div class="frow"><div class="fl"><b>相关论文</b><small>paper list</small></div><div class="ftrack"><i class="fa" data-w="100"><span class="v">4,590</span></i></div></div>
-      <div class="frow"><div class="fl"><b>免费可下载</b><small>OA + 预印本</small></div><div class="ftrack"><i class="fo" data-w="18"><span class="v">~800</span></i></div></div>
-      <div class="frow"><div class="fl"><b>付费墙</b><small>需机构访问</small></div><div class="ftrack"><i class="fp" data-w="78"><span class="v">~3,600</span></i></div></div>
+      <div class="frow"><div class="fl"><b>免费可下载</b><small>OA + 预印本</small></div><div class="ftrack"><i class="fo" data-w="21"><span class="v">961</span></i></div></div>
+      <div class="frow"><div class="fl"><b>付费墙</b><small>需机构访问</small></div><div class="ftrack"><i class="fp" data-w="79"><span class="v">~3,629</span></i></div></div>
       <div class="frow"><div class="fl"><b>脚本被拦</b><small>Cloudflare challenge</small></div><div class="ftrack"><i class="fr" data-w="62"><span class="v">HTTP 403</span></i></div></div>
     </div>
     <div class="dcards rv d2">
       <div class="dcard"><div class="dt r">瓶颈 1 · 主因</div><h3>出版社 403 / Cloudflare</h3><p>Wiley <code>pdfdirect</code>、OUP、Elsevier 对脚本返回 403。这不是 bug，是反爬；只有<b>带认证的真实浏览器</b>能过。</p></div>
-      <div class="dcard"><div class="dt o">瓶颈 2 · 速度</div><h3>arXiv 解析慢且低产</h3><p>每篇 closed 论文都要按标题查一次 arXiv，限速 1rps，约 4.5 秒/篇，命中率仅约 6%。</p></div>
+      <div class="dcard"><div class="dt o">瓶颈 2 · 速度</div><h3>兜底 OA 解析慢</h3><p>难解析论文逐源回退到 CORE（限 10 请求 / 分钟）与 arXiv 标题搜索（限 1rps），全量 <code>--retry</code> 解析以小时计，但幂等可续跑。</p></div>
       <div class="dcard"><div class="dt o">瓶颈 3 · 摘要缺失</div><h3>Elsevier 限制摘要</h3><p>JFE 等摘要重建率仅约 18%，筛选更依赖标题与主题标注。</p></div>
       <div class="dcard"><div class="dt" style="color:#30d158">不是瓶颈</div><h3>采集与并发已解决</h3><p>元数据完整、下载已并发流式化。剩下的纯粹是<b>访问权</b>问题，这就是你的真题。</p></div>
     </div>

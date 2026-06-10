@@ -3,6 +3,13 @@
 # polite pool 联系邮箱：所有 OpenAlex / Unpaywall 请求都会携带，用于提升配额与可联系性。
 mailto: xinchoubiology@gmail.com
 
+# CORE 开放获取聚合器为可选补充来源（resolve-pdfs 兜底）。匿名可用但限速极严：实测为
+# 固定窗口 10 请求 / 60 秒，匿名层默认限到 0.1 rps（约 6/min）。如需提速，在
+# https://core.ac.uk/services/api 免费注册 API key 后，以环境变量提供（不写入本文件，
+# 避免泄露）：export CORE_API_KEY=xxxx
+# 设置后 api.core.ac.uk 放宽到 0.15 rps（约 9/min，安全留在 10/60s 窗口内），解析器以
+# Bearer 提交。
+
 # 采集时间窗口（含）。2020 年至今（2020-2026）。
 since: "2020-01-01"
 until: "2026-12-31"

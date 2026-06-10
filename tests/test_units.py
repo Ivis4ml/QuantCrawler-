@@ -244,6 +244,80 @@ def test_reconcile_marks_existing():
     c.close()
 
 
+class _FakeResp:
+    def __init__(self, payload, status=200):
+        self._payload = payload
+        self.status_code = status
+
+    def json(self):
+        return self._payload
+
+
+class _FakeHttp:
+    """记录最后一次请求，返回预置响应；用于离线测试解析器。"""
+    def __init__(self, resp):
+        self._resp = resp
+        self.last = None
+
+    def get(self, url, *, params=None, headers=None):
+        self.last = {"url": url, "params": params, "headers": headers}
+        return self._resp
+
+
+def test_core_candidates_filters_and_ranks():
+    from quantcrawler.resolvers.core import core_candidates
+    # CORE 自托管直链应排在机构库 .pdf 之前；出版社付费域名被过滤
+    work = {
+        "downloadUrl": "https://api.elsevier.com/content/article/PII:Sxxx",
+        "sourceFulltextUrls": [
+            "https://dx.doi.org/10.1/x",                       # 过滤
+            "https://www.zora.uzh.ch/id/eprint/1/paper.pdf",   # 保留（机构库 .pdf）
+            "https://core.ac.uk/download/300465322.pdf",       # 保留（最优）
+        ],
+    }
+    cands = core_candidates(work)
+    assert cands[0] == "https://core.ac.uk/download/300465322.pdf", cands
+    assert "https://www.zora.uzh.ch/id/eprint/1/paper.pdf" in cands
+    assert all("elsevier" not in c and "dx.doi.org" not in c for c in cands)
+
+
+def test_core_candidates_all_publisher_yields_empty():
+    from quantcrawler.resolvers.core import core_candidates
+    # downloadUrl 与 source 全是出版社付费链接 -> 无候选（正确判为无 OA）
+    work = {
+        "downloadUrl": "http://dx.doi.org/10.1016/j.x",
+        "sourceFulltextUrls": ["https://pubsonline.informs.org/doi/pdf/10.1287/x"],
+    }
+    assert core_candidates(work) == []
+
+
+def test_resolve_core_doi_mismatch_rejected():
+    from quantcrawler.resolvers.core import resolve_core
+    # 返回的 DOI 与查询不一致 -> 拒绝，避免聚合器误匹配
+    http = _FakeHttp(_FakeResp({"results": [
+        {"doi": "10.9/other", "downloadUrl": "https://core.ac.uk/download/1.pdf"}]}))
+    assert resolve_core(http, "https://doi.org/10.1/x") is None
+
+
+def test_resolve_core_happy_path():
+    from quantcrawler.resolvers.core import resolve_core
+    http = _FakeHttp(_FakeResp({"results": [
+        {"doi": "10.1/x", "downloadUrl": "https://core.ac.uk/download/1.pdf",
+         "sourceFulltextUrls": []}]}))
+    out = resolve_core(http, "10.1/x")
+    assert out == ("core", "https://core.ac.uk/download/1.pdf"), out
+    # 按 DOI 精确检索，且默认请求 JSON
+    assert http.last["params"]["q"] == 'doi:"10.1/x"'
+    assert http.last["headers"].get("Accept") == "application/json"
+
+
+def test_resolve_core_no_results():
+    from quantcrawler.resolvers.core import resolve_core
+    assert resolve_core(_FakeHttp(_FakeResp({"results": []})), "10.1/x") is None
+    assert resolve_core(_FakeHttp(_FakeResp({}, status=429)), "10.1/x") is None
+    assert resolve_core(_FakeHttp(_FakeResp({})), "") is None
+
+
 if __name__ == "__main__":
     import traceback
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]

@@ -3,34 +3,34 @@
 - 期刊数：21；时间窗口：2020-2026（7 年）；主题：二级市场 / 微观结构 / 高频 / 量化因子
 - 采集范围：download_scope=all
 - 相关论文（paper list）：4590
-- 已下载：926（20%）；待处理：3664
+- 已下载：961（20%）；待处理：3629
 
 ## 下载状态
-- downloaded：926
-- failed：698
-- paywalled：2966
+- downloaded：961
+- failed：788
+- paywalled：2841
 
 ## 各期刊相关论文数 / 已下载
-- quantitative-finance：695 / 已下载 165
-- journal-of-banking-and-finance：491 / 已下载 46
+- quantitative-finance：695 / 已下载 172
+- journal-of-banking-and-finance：491 / 已下载 50
 - journal-of-financial-economics：372 / 已下载 71
-- management-science：364 / 已下载 56
-- journal-of-empirical-finance：305 / 已下载 22
-- review-of-financial-studies：297 / 已下载 44
-- journal-of-financial-markets：267 / 已下载 23
-- journal-of-financial-and-quantitative-analysis：258 / 已下载 108
-- siam-journal-on-financial-mathematics：242 / 已下载 78
+- management-science：364 / 已下载 59
+- journal-of-empirical-finance：305 / 已下载 24
+- review-of-financial-studies：297 / 已下载 47
+- journal-of-financial-markets：267 / 已下载 25
+- journal-of-financial-and-quantitative-analysis：258 / 已下载 109
+- siam-journal-on-financial-mathematics：242 / 已下载 82
 - journal-of-finance：209 / 已下载 44
-- journal-of-financial-econometrics：205 / 已下载 38
-- mathematical-finance：184 / 已下载 56
+- journal-of-financial-econometrics：205 / 已下载 41
+- mathematical-finance：184 / 已下载 60
 - finance-and-stochastics：145 / 已下载 85
 - journal-of-econometrics：132 / 已下载 27
 - journal-of-business-and-economic-statistics：107 / 已下载 26
 - review-of-asset-pricing-studies：105 / 已下载 10
-- review-of-finance：94 / 已下载 6
+- review-of-finance：94 / 已下载 8
 - operations-research：54 / 已下载 8
 - journal-of-financial-intermediation：28 / 已下载 3
 - econometrica：19 / 已下载 6
 - journal-of-the-american-statistical-association：17 / 已下载 4
 
-清单：`paper_list.csv`（全部）、`download_worklist.csv`（3664 篇待人工 / 校园网下载）
+清单：`paper_list.csv`（全部）、`download_worklist.csv`（3629 篇待人工 / 校园网下载）

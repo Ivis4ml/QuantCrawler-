@@ -131,7 +131,7 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="badge rv in"><span class="d"></span>Python · 仅依赖 httpx + pyyaml · 17/17 tests</div>
+    <div class="badge rv in"><span class="d"></span>Python · 仅依赖 httpx + pyyaml · 22/22 tests</div>
     <h1 class="rv in d1">QuantCrawler</h1>
     <p class="sub rv in d2">采集 20+ 本金融与量化顶刊 <b>2020–2026</b> 中<b>二级市场、微观结构、高频交易、量化因子</b>方向的论文，记录元数据，并在合法范围内下载开放获取原文 PDF。</p>
     <div class="cta rv in d3">
@@ -142,7 +142,7 @@
     <div class="stats rv in d4">
       <div class="s"><div class="n b" data-to="21">0</div><div class="l">目标顶刊</div></div>
       <div class="s"><div class="n" data-to="4590">0</div><div class="l">相关论文</div></div>
-      <div class="s"><div class="n g" data-to="926">0</div><div class="l">已下载 OA</div></div>
+      <div class="s"><div class="n g" data-to="961">0</div><div class="l">已下载 OA</div></div>
       <div class="s"><div class="n" data-to="6">0</div><div class="l">流水线阶段</div></div>
     </div>
   </div>
@@ -151,7 +151,7 @@
 <!-- OVERVIEW -->
 <section id="overview" class="soft">
   <div class="wrap">
-    <div class="shead rv"><div class="tag">概览</div><h2>一个可断点续跑的学术采集器</h2><p>纯 Python 命令行工具。元数据来自免费学术 API（OpenAlex / Crossref / Unpaywall / arXiv），状态记在 SQLite，<b>每个阶段幂等、可续跑</b>。仅下载合法开放副本，付费墙论文只记元数据。</p></div>
+    <div class="shead rv"><div class="tag">概览</div><h2>一个可断点续跑的学术采集器</h2><p>纯 Python 命令行工具。元数据来自免费学术 API（OpenAlex / Crossref），OA 定位汇集 Unpaywall / Semantic Scholar / OpenAIRE / CORE / arXiv 多源，状态记在 SQLite，<b>每个阶段幂等、可续跑</b>。仅下载合法开放副本，付费墙论文只记元数据。</p></div>
     <div class="bento">
       <div class="tile s3 rv"><div class="ic">采集范围</div><h3>20+ 顶刊 · 四个主题</h3><p>核心金融三大刊、微观结构 / 量化 / 数理金融、计量 / 统计 / 管理科学（仅金融相关）。主题聚焦二级市场、微观结构、高频、量化因子，排除公司金融 / 银行 / 宏观。</p></div>
       <div class="tile s3 rv d1"><div class="ic">规模</div><h3>4,590 篇相关论文</h3><p>2020–2026 窗口内，按类别分口径筛出的相关论文。完整清单见 <code>paper_list.csv</code>，未下载的进 <code>download_worklist.csv</code>。</p></div>
@@ -164,7 +164,7 @@
   <div class="wrap">
     <div class="shead rv"><div class="tag">特性</div><h2>工程要点</h2></div>
     <div class="bento">
-      <div class="tile s2 rv"><div class="ic">数据源</div><h3>四个免费 API</h3><p>OpenAlex 元数据 / OA / 主题，Crossref 兜底，Unpaywall 定位 OA，arXiv 匹配预印本。全部 polite pool。</p></div>
+      <div class="tile s2 rv"><div class="ic">数据源</div><h3>多源免费 API</h3><p>OpenAlex 元数据 / OA / 主题，Crossref 兜底；OA 定位走 Unpaywall → Semantic Scholar → OpenAIRE → CORE → arXiv 多源候选链。全部 polite pool。</p></div>
       <div class="tile s2 rv d1"><div class="ic">相关性筛选</div><h3>按期刊类别分口径</h3><p>金融本位刊宽口径；非金融刊只认金融关键词，避免误收通用统计 / ML 论文。</p></div>
       <div class="tile s2 rv d2"><div class="ic">并发与健壮</div><h3>线程池 + 流式</h3><p>按主机限速（arXiv 单独 1rps），流式落盘、校验 %PDF、sha256、原子写入、断点续传。</p></div>
       <div class="tile s3 rv"><div class="ic">幂等存储</div><h3>SQLite 状态机</h3><p>每篇记 <code>download_status</code>、<code>pdf_source</code>、<code>sha256</code>。重跑只处理未完成项；列以单一来源驱动建表与自动迁移。</p></div>
@@ -202,7 +202,7 @@ pip install -r requirements.txt
 
 <span class="c"># 3) 看进度</span>
 <span class="b">python -m quantcrawler</span> stats
-<span class="g">→ downloaded: 926   paywalled: 2966   failed: 698   pending: 0</span></pre>
+<span class="g">→ downloaded: 961   paywalled: 2841   failed: 788   pending: 0</span></pre>
     </div>
   </div>
 </section>
@@ -239,7 +239,7 @@ pip install -r requirements.txt
     <a href="https://github.com/Ivis4ml/QuantCrawler-" target="_blank" rel="noopener">GitHub</a> ·
     <a href="./warmup_brief.html">Warmup</a> ·
     <a href="https://github.com/Ivis4ml/QuantCrawler-/blob/main/CLAUDE.md" target="_blank" rel="noopener">设计文档</a>
-    <div class="meta">Python 3.11+ · httpx · pyyaml · OpenAlex / Crossref / Unpaywall / arXiv</div>
+    <div class="meta">Python 3.11+ · httpx · pyyaml · OpenAlex / Crossref / Unpaywall / Semantic Scholar / OpenAIRE / CORE / arXiv</div>
   </div>
 </footer>
 
